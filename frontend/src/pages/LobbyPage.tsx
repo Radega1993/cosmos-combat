@@ -2,16 +2,25 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { socketService } from '../services/socket.service';
 import { useLobbyStore } from '../store/lobby.store';
+import { useAuth } from '../contexts/AuthContext';
 import './LobbyPage.css';
 
 function LobbyPage() {
     const navigate = useNavigate();
     const { setCurrentGame, setCurrentPlayerId, setError, currentGame } = useLobbyStore();
-    const [playerName, setPlayerName] = useState('');
+    const { user, isAuthenticated, logout } = useAuth();
+    const [playerName, setPlayerName] = useState(user?.username || '');
     const [gameId, setGameId] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [isJoining, setIsJoining] = useState(false);
     const [gameMode, setGameMode] = useState<'random' | 'select'>('random');
+
+    // Update player name when user changes
+    useEffect(() => {
+        if (user?.username) {
+            setPlayerName(user.username);
+        }
+    }, [user]);
 
     useEffect(() => {
         socketService.connect();
@@ -100,6 +109,22 @@ function LobbyPage() {
         <div className="lobby-page">
             <div className="lobby-container">
                 <div className="lobby-header">
+                    {isAuthenticated ? (
+                        <div className="user-info">
+                            <span>👤 {user?.username}</span>
+                            {user?.role === 'admin' && (
+                                <Link to="/admin" className="admin-link">
+                                    🛡️ Admin
+                                </Link>
+                            )}
+                            <button onClick={logout}>Cerrar Sesión</button>
+                        </div>
+                    ) : (
+                        <div className="auth-buttons">
+                            <Link to="/login">Iniciar Sesión</Link>
+                            <Link to="/register">Registrarse</Link>
+                        </div>
+                    )}
                     <h1 className="lobby-title">🌌 Cosmos Combat</h1>
                     <p className="lobby-subtitle">Por Raül de Arriba</p>
                     <div className="game-info-badges">
@@ -123,10 +148,11 @@ function LobbyPage() {
                         <div className="input-group">
                             <input
                                 type="text"
-                                placeholder="Your name"
+                                placeholder={isAuthenticated ? user?.username : "Your name"}
                                 value={playerName}
                                 onChange={(e) => setPlayerName(e.target.value)}
-                                disabled={isCreating || isJoining}
+                                disabled={(isCreating || isJoining) || isAuthenticated}
+                                title={isAuthenticated ? "Usando tu nombre de usuario" : "Ingresa tu nombre"}
                             />
                             <div className="game-mode-selector">
                                 <label className="game-mode-label">Game Mode:</label>
@@ -168,10 +194,11 @@ function LobbyPage() {
                         <div className="input-group">
                             <input
                                 type="text"
-                                placeholder="Your name"
+                                placeholder={isAuthenticated ? user?.username : "Your name"}
                                 value={playerName}
                                 onChange={(e) => setPlayerName(e.target.value)}
-                                disabled={isCreating || isJoining}
+                                disabled={(isCreating || isJoining) || isAuthenticated}
+                                title={isAuthenticated ? "Usando tu nombre de usuario" : "Ingresa tu nombre"}
                             />
                             <input
                                 type="text"

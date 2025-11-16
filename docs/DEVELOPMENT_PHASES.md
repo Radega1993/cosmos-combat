@@ -95,43 +95,62 @@ Implementar el sistema completo de habilidades especiales y efectos de estado de
 
 ### Funcionalidades Requeridas
 
-#### 1. Sistema Modular de Habilidades
-- [ ] Schema de MongoDB para habilidades
-- [ ] Sistema de carga de habilidades desde MongoDB
-- [ ] Ejecución de habilidades
-- [ ] Validación de condiciones (cooldown, recursos, etc.)
+#### 1. Sistema Modular de Habilidades ✅
+- [x] Schema de MongoDB para habilidades
+- [x] Sistema de carga de habilidades desde MongoDB
+- [x] Ejecución de habilidades
+- [x] Validación de condiciones (cooldown, recursos, etc.)
 
-#### 2. Efectos de Estado
-- [ ] **Parálisis**
-  - Bloqueo de acciones
+#### 2. Efectos de Estado ✅
+- [x] **Parálisis**
+  - Bloqueo de acciones (-1 acción por turno)
   - Duración configurable
-- [ ] **Quemadura**
-  - Daño por turno
+  - Curable con tirada de 6
+- [x] **Quemadura**
+  - Descarte de carta al inicio de turno
   - Duración configurable
-- [ ] **Congelación**
-  - Reducción de velocidad/acciones
+- [x] **Congelación**
+  - Reducción de acciones (-1 acción por turno)
   - Duración configurable
-- [ ] Sistema genérico de efectos temporales
+  - Curable con tirada de 6
+- [x] Sistema genérico de efectos temporales (EffectsService)
 
-#### 3. Efectos Defensivos
-- [ ] **Escudos**
-  - Absorción de daño
-  - Duración o cantidad de usos
-- [ ] **Contraataques**
-  - Daño reflejado
-  - Condiciones de activación
+#### 3. Efectos Defensivos ✅
+- [x] **Escudos**
+  - Absorción de daño antes de que afecte HP
+  - Escudos se consumen al absorber daño
+  - Visualización en UI
+- [x] **Contraataques**
+  - Reflejo de daño al atacante
+  - Soporte para porcentajes de reflejo (50%, 100%)
+  - Tirada de dado para activación (opcional)
+  - Mínimo 1 de daño reflejado
+  - Visualización en UI
 
-#### 4. Ataques Especiales
-- [ ] **Ataques de Área**
-  - Múltiples objetivos
-  - Reducción de daño (si aplica)
-- [ ] **Ataques con efectos**
-  - Combinación de daño + efecto
+#### 4. Ataques Especiales ✅
+- [x] **Ataques de Área**
+  - Sistema de objetivos múltiples (all, area)
+  - Aplicación de daño a múltiples objetivos
+  - Aplicación de efectos a múltiples objetivos
+  - Ataques con tiradas de dado (Embate Furioso, Rayos Cósmicos)
+  - Visualización en UI con badge "ÁREA"
+  - No requiere selección de objetivo para ataques de área
+- [x] **Ataques con efectos combinados**
+  - Combinación de daño + efectos simultáneos
+  - Aplicación a múltiples objetivos
+  - Ejemplo: Implosión Energética (daño + aturdimiento)
 
-#### 5. Sistema de Duración
-- [ ] Contador de turnos por efecto
-- [ ] Aplicación automática al inicio/fin de turno
-- [ ] Eliminación automática de efectos expirados
+#### 5. Sistema de Autenticación y Administración ✅
+- [x] **Autenticación**
+  - Sistema de usuarios con roles (admin, user)
+  - JWT para autenticación segura
+  - Guards para proteger rutas
+  - Modo invitado (sin login)
+- [x] **Panel de Administración**
+  - Interfaz para activar/desactivar elementos
+  - Modificación de habilidades, cartas y personajes
+  - Solo accesible para administradores
+  - Interfaz responsive y temática
 - [ ] Stack de efectos (múltiples efectos simultáneos)
 
 #### 6. Panel de Configuración

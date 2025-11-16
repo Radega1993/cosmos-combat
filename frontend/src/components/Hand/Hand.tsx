@@ -44,6 +44,9 @@ function Hand({ cards, onCardClick }: HandProps) {
                                 {card.defense && <span>DEF: {card.defense}</span>}
                                 {card.shield && <span>SHIELD: {card.shield}</span>}
                                 {card.cost !== undefined && <span>COST: {card.cost}</span>}
+                                {(card.targetType === 'all' || card.targetType === 'area') && (
+                                    <span className="area-badge">ÁREA</span>
+                                )}
                             </div>
                         </div>
                     </div>

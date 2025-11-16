@@ -117,6 +117,20 @@
   margin-bottom: 0.5rem;
   display: inline-block;
   font-weight: 600;
+  cursor: help;
+}
+
+.counter-indicator {
+  padding: 0.3rem 0.6rem;
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 6px;
+  font-size: clamp(0.75rem, 1.8vw, 0.8rem);
+  color: #fbbf24;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  font-weight: 600;
+  cursor: help;
 }
 
 .effects-list {
@@ -134,6 +148,31 @@
   font-size: clamp(0.7rem, 1.8vw, 0.75rem);
   color: #a78bfa;
   font-weight: 600;
+  cursor: help;
+}
+
+.effect-badge.effect-burn {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.effect-badge.effect-paralysis {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+}
+
+.effect-badge.effect-freeze {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.effect-badge.effect-counter {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
 }
 
 .player-stats {

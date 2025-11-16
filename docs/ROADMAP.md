@@ -60,33 +60,37 @@
 
 ## 🎯 FASE 2: Habilidades y Efectos (10 días)
 
-### Día 8-9: Sistema Modular de Habilidades
-- [ ] Estructura de datos para habilidades
-- [ ] Carga desde JSON
-- [ ] Sistema de ejecución
-- [ ] Validación de condiciones
+### Día 8-9: Sistema Modular de Habilidades ✅
+- [x] Estructura de datos para habilidades
+- [x] Carga desde MongoDB
+- [x] Sistema de ejecución
+- [x] Validación de condiciones
 
-### Día 10-11: Efectos de Estado
-- [ ] Sistema genérico de efectos
-- [ ] Implementar Quemadura
-- [ ] Implementar Parálisis
-- [ ] Implementar Congelación
-- [ ] Sistema de duración
+### Día 10-11: Efectos de Estado ✅
+- [x] Sistema genérico de efectos
+- [x] Implementar Quemadura
+- [x] Implementar Parálisis
+- [x] Implementar Congelación
+- [x] Sistema de duración
 
-### Día 12-13: Efectos Defensivos
-- [ ] Sistema de Escudos
-- [ ] Sistema de Contraataques
-- [ ] Integración con combate
+### Día 12-13: Efectos Defensivos ✅
+- [x] Sistema de Escudos
+- [x] Sistema de Contraataques
+- [x] Integración con combate
 
-### Día 14-15: Ataques Especiales
-- [ ] Ataques de área
-- [ ] Ataques con efectos combinados
-- [ ] Sistema de objetivos múltiples
+### Día 14-15: Ataques Especiales ✅
+- [x] Ataques de área
+- [x] Ataques con efectos combinados
+- [x] Sistema de objetivos múltiples
 
-### Día 16-17: Panel de Configuración
-- [ ] Interfaz de administración
-- [ ] Modificación de habilidades
-- [ ] Activación/desactivación
+### Día 16-17: Panel de Configuración ✅
+- [x] Sistema de autenticación (JWT, roles)
+- [x] Interfaz de administración
+- [x] Modificación de habilidades
+- [x] Activación/desactivación
+- [x] Páginas de Login/Register
+- [x] Protección de rutas
+- [x] Modo invitado integrado
 
 **Entregable**: Sistema completo de habilidades y efectos
 

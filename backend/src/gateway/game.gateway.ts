@@ -291,6 +291,45 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
+    @SubscribeMessage('game:use-skill')
+    async handleUseSkill(
+        @ConnectedSocket() client: Socket,
+        @MessageBody() data: { gameId: string; playerId: string; skillId: string; targetId?: string },
+    ) {
+        try {
+            const result = await this.gameService.useSkill(
+                data.gameId,
+                data.playerId,
+                data.skillId,
+                data.targetId,
+            );
+            if (result.success) {
+                // Check if game ended
+                if (result.gameState?.phase === 'finished') {
+                    // Notify all players that game finished
+                    this.server.to(data.gameId).emit('game:finished', {
+                        gameState: result.gameState,
+                    });
+                } else {
+                    // Notify all players of the action
+                    this.server.to(data.gameId).emit('game:action-performed', {
+                        action: 'use-skill',
+                        playerId: data.playerId,
+                        skillId: data.skillId,
+                        targetId: data.targetId,
+                        gameState: result.gameState,
+                        message: result.message,
+                    });
+                }
+            } else {
+                client.emit('error', { message: result.message });
+            }
+        } catch (error) {
+            client.emit('error', { message: error.message });
+            this.logger.error(`Error using skill: ${error.message}`);
+        }
+    }
+
     @SubscribeMessage('game:get-state')
     async handleGetState(
         @ConnectedSocket() client: Socket,

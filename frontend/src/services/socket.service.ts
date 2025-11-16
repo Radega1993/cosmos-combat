@@ -113,6 +113,10 @@ class SocketService {
         this.socket?.emit('game:attack', { gameId, attackerId, targetId });
     }
 
+    useSkill(gameId: string, playerId: string, skillId: string, targetId?: string): void {
+        this.socket?.emit('game:use-skill', { gameId, playerId, skillId, targetId });
+    }
+
     getGameState(gameId: string): void {
         this.socket?.emit('game:get-state', { gameId });
     }

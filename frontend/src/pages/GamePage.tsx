@@ -6,11 +6,12 @@ import { useLobbyStore } from '../store/lobby.store';
 import { useGameStore } from '../store/game.store';
 import CharacterSelector from '../components/CharacterSelector/CharacterSelector';
 import Hand from '../components/Hand/Hand';
+import SkillsList from '../components/SkillsList/SkillsList';
 import TurnIndicator from '../components/TurnIndicator/TurnIndicator';
 import PlayerStatus from '../components/PlayerStatus/PlayerStatus';
 import GameActions from '../components/GameActions/GameActions';
 import GameFinished from '../components/GameFinished/GameFinished';
-import { GameState } from '../types/game.types';
+import { GameState, Skill, PlayerGameState } from '../types/game.types';
 import './GamePage.css';
 
 function GamePage() {
@@ -20,6 +21,7 @@ function GamePage() {
     const { setCharacters, setHand, hand } = useGameStore();
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [selectingTarget, setSelectingTarget] = useState<string | null>(null);
+    const [skills, setSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
         if (!gameId) {
@@ -78,6 +80,10 @@ function GamePage() {
                 if (currentPlayer?.hand) {
                     loadCardsForHand(currentPlayer.hand);
                 }
+                // Load skills for current player's character
+                if (currentPlayer?.characterId) {
+                    loadSkills(currentPlayer.characterId);
+                }
             }
         });
 
@@ -96,6 +102,10 @@ function GamePage() {
                 if (currentPlayer?.hand) {
                     loadCardsForHand(currentPlayer.hand);
                 }
+                // Reload skills to update cooldowns
+                if (currentPlayer?.characterId) {
+                    loadSkills(currentPlayer.characterId);
+                }
             }
         });
 
@@ -103,12 +113,16 @@ function GamePage() {
             setGameState(data.gameState);
             // Update hand for current player - always sync with latest gameState
             if (data.gameState && currentPlayerId) {
-                const currentPlayer = data.gameState.players.find((p) => p.playerId === currentPlayerId);
+                const currentPlayer = data.gameState.players.find((p: PlayerGameState) => p.playerId === currentPlayerId);
                 if (currentPlayer?.hand) {
                     // Force reload to ensure sync
                     loadCardsForHand([...currentPlayer.hand]); // Create new array to force update
                 } else {
                     setHand([]); // Clear hand if player not found
+                }
+                // Load skills for current player's character
+                if (currentPlayer?.characterId) {
+                    loadSkills(currentPlayer.characterId);
                 }
             }
         });
@@ -143,6 +157,16 @@ function GamePage() {
             setCharacters(chars);
         } catch (error) {
             console.error('Error loading characters:', error);
+        }
+    };
+
+    const loadSkills = async (characterId: string) => {
+        try {
+            const characterSkills = await apiService.getSkills(characterId);
+            setSkills(characterSkills || []);
+        } catch (error) {
+            console.error('Error loading skills:', error);
+            setSkills([]);
         }
     };
 
@@ -211,18 +235,56 @@ function GamePage() {
 
     const handlePlayCard = (cardId: string, targetId?: string) => {
         if (gameId && currentPlayerId) {
+            // Check if card needs target selection
+            const card = hand.find((c) => c.id === cardId);
+            if (card && card.targetType === 'single' && !targetId) {
+                setSelectingTarget(cardId);
+                return;
+            }
+            // For area/all attacks, no target selection needed
             socketService.playCard(gameId, currentPlayerId, cardId, targetId);
+            setSelectingTarget(null);
+        }
+    };
+
+    const handleUseSkill = (skill: Skill, targetId?: string) => {
+        if (gameId && currentPlayerId) {
+            // Check if skill needs target selection
+            if (skill.targetType === 'single' && !targetId) {
+                setSelectingTarget(skill.id);
+                return;
+            }
+            // For area/all attacks, no target selection needed
+            socketService.useSkill(gameId, currentPlayerId, skill.id, targetId);
+            setSelectingTarget(null);
         }
     };
 
     const handleTargetSelect = (targetId: string) => {
         if (selectingTarget === 'attack') {
             handleAttack(targetId);
-        } else if (selectingTarget) {
-            handlePlayCard(selectingTarget, targetId);
+        } else if (selectingTarget && typeof selectingTarget === 'string') {
+            // Check if it's a skill ID
+            const skill = skills.find((s) => s.id === selectingTarget);
+            if (skill) {
+                handleUseSkill(skill, targetId);
+            } else {
+                // It's a card ID
+                handlePlayCard(selectingTarget, targetId);
+            }
         }
         setSelectingTarget(null);
     };
+
+    // Load skills when gameState changes and we have a character
+    useEffect(() => {
+        if (gameState && currentPlayerId) {
+            const currentPlayer = gameState.players.find((p) => p.playerId === currentPlayerId);
+            if (currentPlayer?.characterId) {
+                loadSkills(currentPlayer.characterId);
+            }
+        }
+    }, [gameState?.players, currentPlayerId]);
 
     if (!currentGame) {
         return (
@@ -377,6 +439,23 @@ function GamePage() {
                                     }}
                                 />
                             )}
+
+                            {gameState && currentPlayerId && (() => {
+                                const currentPlayer = gameState.players.find((p) => p.playerId === currentPlayerId);
+                                const playerCooldowns = currentPlayer?.status.cooldowns || {};
+                                return skills.length > 0 && (
+                                    <SkillsList
+                                        skills={skills}
+                                        cooldowns={playerCooldowns}
+                                        onSkillClick={(skill) => {
+                                            if (gameState.currentPlayerId === currentPlayerId && (gameState.actionsRemaining || 0) > 0) {
+                                                handleUseSkill(skill);
+                                            }
+                                        }}
+                                        disabled={gameState.currentPlayerId !== currentPlayerId || (gameState.actionsRemaining || 0) <= 0}
+                                    />
+                                );
+                            })()}
                         </div>
                     )}
                 </div>

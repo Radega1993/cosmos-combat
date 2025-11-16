@@ -109,7 +109,7 @@ export class AnalyticsService {
         playerId: string,
         playerName: string,
         characterId: string,
-        actionType: 'play-card' | 'use-skill' | 'attack' | 'defend' | 'draw-card' | 'end-turn',
+        actionType: 'play-card' | 'use-skill' | 'attack' | 'defend' | 'draw-card' | 'end-turn' | 'effect-discard' | 'counterattack',
         actionDetails: {
             cardId?: string;
             cardName?: string;
@@ -120,6 +120,9 @@ export class AnalyticsService {
             damage?: number;
             heal?: number;
             effectsApplied?: Array<{ type: string; duration: number }>;
+            effectType?: string;
+            cardsDiscarded?: number;
+            originalDamage?: number;
         },
     ): Promise<GameActionDocument> {
         // Increment action count

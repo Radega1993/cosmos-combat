@@ -6,6 +6,8 @@ import { LobbyModule } from '../lobby/lobby.module';
 import { CharactersModule } from '../characters/characters.module';
 import { CardsModule } from '../cards/cards.module';
 import { AnalyticsModule } from '../analytics/analytics.module';
+import { SkillsModule } from '../skills/skills.module';
+import { EffectsModule } from '../effects/effects.module';
 import { GameSession, GameSessionSchema } from '../lobby/schemas/game-session.schema';
 import { GameBalance, GameBalanceSchema } from '../database/schemas/game-balance.schema';
 import { Card, CardSchema } from '../database/schemas/card.schema';
@@ -21,6 +23,8 @@ import { Card, CardSchema } from '../database/schemas/card.schema';
         CharactersModule,
         CardsModule,
         AnalyticsModule,
+        SkillsModule,
+        EffectsModule,
     ],
     providers: [GameService, GameStateService],
     exports: [GameService, GameStateService],

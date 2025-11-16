@@ -1,6 +1,6 @@
 # 📊 Estado Actual del Proyecto - Cosmos Combat
 
-**Última actualización**: Diciembre 2024 (Post-FASE 1 + Extras)
+**Última actualización**: Diciembre 2024 (FASE 2 - Días 8-9 Completados)
 
 ---
 
@@ -29,7 +29,138 @@
 
 ---
 
-## ⏳ Pendiente - FASE 1
+## ✅ FASE 2: Habilidades y Efectos (En Progreso)
+
+### Día 8-9: Sistema Modular de Habilidades ✅ COMPLETADO
+- [x] **SkillsService creado**
+  - [x] Carga de habilidades desde MongoDB
+  - [x] Métodos: findAll(), findOne(), findByIds(), findByCharacter()
+  - [x] SkillsController con endpoints REST
+  - [x] SkillsModule integrado en GameModule
+
+- [x] **Sistema de ejecución de habilidades**
+  - [x] GameService.useSkill() implementado
+  - [x] Validación de condiciones (turno, acciones, cooldown, personaje)
+  - [x] Aplicación de efectos (daño, curación, escudo, estados)
+  - [x] Reducción automática de cooldowns al final del turno
+  - [x] Integración con analytics
+
+- [x] **Frontend - UI de habilidades**
+  - [x] SkillsList component creado
+  - [x] Visualización de habilidades disponibles
+  - [x] Indicadores de cooldown
+  - [x] Selección de objetivos
+  - [x] Integración en GamePage
+  - [x] Carga automática por personaje
+
+- [x] **WebSocket Gateway**
+  - [x] Endpoint 'game:use-skill' implementado
+  - [x] Eventos de acción y finalización de partida
+
+### Día 10-11: Efectos de Estado ✅ COMPLETADO
+- [x] **EffectsService creado**
+  - [x] Sistema genérico y modular de efectos
+  - [x] Aplicación al inicio de turno
+  - [x] Verificación de inmunidades
+  - [x] Sistema de curación con tirada de dado
+
+- [x] **Efectos implementados**
+  - [x] Quemadura: Descarte de carta al inicio de turno
+  - [x] Parálisis: Reducción de 1 acción (curable con tirada de 6)
+  - [x] Congelación: Reducción de 1 acción (curable con tirada de 6)
+
+- [x] **Sistema de duración**
+  - [x] Reducción automática al final de turno
+  - [x] Eliminación automática de efectos expirados
+  - [x] Procesamiento en processEffectDurations()
+
+- [x] **Frontend - Visualización de efectos**
+  - [x] Iconos y colores específicos por tipo
+  - [x] Tooltips con descripciones
+  - [x] Muestra duración restante
+  - [x] Diseño responsive
+
+### Día 12-13: Efectos Defensivos ✅ COMPLETADO
+- [x] **Sistema de Escudos mejorado**
+  - [x] Absorción de daño antes de afectar HP
+  - [x] Escudos se consumen al absorber daño
+  - [x] Visualización mejorada en UI
+  - [x] Tooltips informativos
+
+- [x] **Sistema de Contraataques**
+  - [x] Reflejo de daño al atacante
+  - [x] Soporte para porcentajes (50%, 100%)
+  - [x] Tirada de dado para activación (opcional)
+  - [x] Mínimo 1 de daño reflejado
+  - [x] Integración completa en applyDamage()
+  - [x] Registro en analytics
+  - [x] Visualización en UI
+
+- [x] **Integración con combate**
+  - [x] Escudos aplicados antes de daño a HP
+  - [x] Contraataques se activan automáticamente
+  - [x] Funciona con ataques, cartas y habilidades
+  - [x] Previene loops infinitos de contraataques
+
+### Día 14-15: Ataques Especiales ✅ COMPLETADO
+- [x] **Sistema de Objetivos Múltiples**
+  - [x] Método `getValidTargets()` para obtener múltiples objetivos
+  - [x] Soporte para `targetType: 'all'` y `targetType: 'area'`
+  - [x] Excluye automáticamente al jugador que ataca
+  - [x] Solo afecta a jugadores con HP > 0
+
+- [x] **Ataques de Área**
+  - [x] Método `applyDamageToMultiple()` para aplicar daño a múltiples objetivos
+  - [x] Método `applyEffectsToMultiple()` para aplicar efectos a múltiples objetivos
+  - [x] Integrado en `playCard()` y `useSkill()`
+  - [x] Funciona con todas las cartas y habilidades de área
+
+- [x] **Ataques con Efectos Combinados**
+  - [x] Ataques de área pueden aplicar daño + efectos simultáneamente
+  - [x] Ejemplo: Implosión Energética (daño + aturdimiento a todos)
+  - [x] Efectos se aplican a todos los objetivos afectados
+
+- [x] **Ataques Especiales con Tiradas**
+  - [x] Embate Furioso: tirada por jugador, 1 daño por cada tirada > 3
+  - [x] Rayos Cósmicos: tirada por jugador, 1 daño por cada tirada > 3
+  - [x] Sistema de tiradas de dado integrado
+  - [x] Mensajes informativos con resultados de tiradas
+
+- [x] **Frontend - Visualización y UX**
+  - [x] Badge "ÁREA" en cartas y habilidades de área
+  - [x] No requiere selección de objetivo para ataques de área
+  - [x] Selección automática de todos los oponentes
+  - [x] Tooltips mejorados con información de objetivo
+
+### Día 16-17: Panel de Configuración y Autenticación ✅ COMPLETADO
+- [x] **Sistema de Autenticación**
+  - [x] Backend: JWT, Guards (JwtAuthGuard, RolesGuard)
+  - [x] Schema de User con roles (admin, user)
+  - [x] Endpoints: /auth/register, /auth/login, /auth/me
+  - [x] Frontend: AuthContext con persistencia en localStorage
+  - [x] Páginas de Login y Register
+  - [x] Protección de rutas (ProtectedRoute)
+  - [x] Modo invitado integrado (sin login)
+
+- [x] **Panel de Administración**
+  - [x] Backend: AdminModule protegido (solo admin)
+  - [x] Endpoints para actualizar y activar/desactivar:
+    - Skills: /admin/skills/:id, /admin/skills/:id/toggle
+    - Cards: /admin/cards/:id, /admin/cards/:id/toggle
+    - Characters: /admin/characters/:id, /admin/characters/:id/toggle
+  - [x] Frontend: Panel completo con tabs
+  - [x] Interfaz responsive y temática
+  - [x] Mensajes de éxito/error
+
+- [x] **Integración con Lobby**
+  - [x] Usuarios logueados usan su username automáticamente
+  - [x] Invitados pueden ingresar nombre manualmente
+  - [x] Enlaces a login/register en lobby
+  - [x] Botón de admin para usuarios con rol admin
+
+---
+
+## ⏳ Pendiente - FASE 1 (Completada)
 
 ### Día 3-4: Sistema de Turnos ✅ COMPLETADO
 - [x] **Inicialización de turno**
@@ -142,42 +273,72 @@
 
 **Backend:**
 - ✅ `GameService.startGame()` - Inicia partida y reparte cartas
-- ✅ `GameService.drawCard()` - Placeholder (necesita implementación)
+- ✅ `GameService.drawCard()` - Robo de cartas del mazo compartido
+- ✅ `GameService.useSkill()` - Sistema de ejecución de habilidades
+- ✅ `GameService.playCard()` - Jugar cartas con efectos
+- ✅ `GameService.performAttack()` - Ataque básico
+- ✅ `GameService.applyStartOfTurnEffects()` - Aplicación de efectos al inicio de turno
+- ✅ `GameService.discardRandomCards()` - Descarte de cartas por efectos
+- ✅ `GameService.applyDamage()` - Sistema mejorado con escudos y contraataques
+- ✅ `GameService.applyShield()` - Aplicación de escudos
+- ✅ `GameService.getValidTargets()` - Obtención de múltiples objetivos
+- ✅ `GameService.applyDamageToMultiple()` - Aplicación de daño a múltiples objetivos
+- ✅ `GameService.applyEffectsToMultiple()` - Aplicación de efectos a múltiples objetivos
 - ✅ Estructura de `GameState` y `PlayerGameState` definida
-- ⚠️ Estado del juego solo en memoria (necesita persistencia)
+- ✅ `SkillsService` - Carga de habilidades desde MongoDB
+- ✅ `EffectsService` - Sistema genérico de efectos de estado
+- ✅ Sistema de cooldowns y reducción automática
+- ✅ Sistema de duración de efectos y expiración automática
+- ✅ `AuthService` - Autenticación con JWT
+- ✅ `AdminService` - Gestión de elementos del juego (solo admin)
+- ✅ Guards: `JwtAuthGuard`, `RolesGuard`
+- ✅ Decoradores: `@Roles()`, `@GetCurrentUser()`
+- ✅ Persistencia de partidas en MongoDB
 
 **Frontend:**
 - ✅ Visualización de mano de cartas
 - ✅ Selección de personajes
-- ✅ UI básica de juego
-- ⚠️ Falta UI para acciones de juego
-- ⚠️ Falta indicador de turno
+- ✅ UI completa de juego
+- ✅ Sistema de turnos con indicadores
+- ✅ UI de habilidades (SkillsList component)
+- ✅ Visualización de cooldowns
+- ✅ Visualización de efectos activos con iconos y colores
+- ✅ Tooltips con descripciones de efectos
+- ✅ Visualización de escudos y contraataques
+- ✅ Selección de objetivos
+- ✅ Páginas de Login y Register
+- ✅ Panel de administración (solo admin)
+- ✅ Contexto de autenticación
+- ✅ Protección de rutas
 
 ### Problemas Conocidos
-- Estado del juego no se persiste (solo en memoria durante la sesión)
-- No hay gestión de turnos implementada
-- No hay acciones de juego implementadas
-- Falta validación de reglas del juego
+- Ninguno conocido. Todos los sistemas están funcionando correctamente.
 
 ---
 
 ## 🚀 Siguiente Sprint Sugerido
 
-**Objetivo**: Completar Sistema de Turnos y Acciones Básicas
+**Objetivo**: Comenzar FASE 3 - Panel de Balanceo (Días 18-20)
 
-1. Implementar `GameService` para gestión de turnos
-2. Agregar eventos WebSocket para turnos
-3. Implementar acciones básicas (robar, jugar carta, ataque)
-4. UI para mostrar turno y acciones disponibles
-5. Sistema de selección de objetivos
+1. Panel de balanceo avanzado
+2. Sistema de versionado de balance
+3. Aplicación de cambios de balance en tiempo real
+4. Interfaz para modificar stats de personajes, cartas y habilidades
+5. Historial de cambios de balance
 
-**Tiempo estimado**: 2-3 días
+**Tiempo estimado**: 3 días
 
 ---
 
-**Estado General**: ✅ COMPLETADO - 100% de FASE 1 + Extras
+**Estado General**: ✅ FASE 1 COMPLETA + FASE 2 COMPLETA (Días 8-17 Completados)
 
 **FASE 1 COMPLETA**: Todas las funcionalidades del MVP están implementadas y funcionando.
+**FASE 2 COMPLETA**: 
+  - ✅ Sistema modular de habilidades (Días 8-9)
+  - ✅ Efectos de estado (Días 10-11)
+  - ✅ Efectos defensivos (Días 12-13)
+  - ✅ Ataques especiales (Días 14-15)
+  - ✅ Panel de configuración y autenticación (Días 16-17)
 
 ---
 

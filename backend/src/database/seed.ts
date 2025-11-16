@@ -6,6 +6,8 @@ import { Character } from './schemas/character.schema';
 import { Card } from './schemas/card.schema';
 import { Skill } from './schemas/skill.schema';
 import { GameBalance } from './schemas/game-balance.schema';
+import { User, UserRole, UserSchema } from './schemas/user.schema';
+import * as bcrypt from 'bcryptjs';
 
 async function bootstrap() {
     const app = await NestFactory.createApplicationContext(AppModule);
@@ -14,6 +16,7 @@ async function bootstrap() {
     const cardModel = app.get<Model<Card>>(getModelToken('Card'));
     const skillModel = app.get<Model<Skill>>(getModelToken('Skill'));
     const gameBalanceModel = app.get<Model<GameBalance>>(getModelToken('GameBalance'));
+    const userModel = app.get<Model<User>>(getModelToken('User'));
 
     console.log('🌱 Starting database seed...');
 
@@ -630,6 +633,27 @@ async function bootstrap() {
 
     await gameBalanceModel.create(gameBalance);
     console.log('✅ Seeded game balance');
+
+    // Create admin user if it doesn't exist
+    try {
+        const existingAdmin = await userModel.findOne({ username: 'admin' }).exec();
+        if (!existingAdmin) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            await userModel.create({
+                username: 'admin',
+                email: 'admin@cosmoscombat.com',
+                password: hashedPassword,
+                role: UserRole.ADMIN,
+                isActive: true,
+            });
+            console.log('✅ Admin user created (username: admin, password: admin123)');
+        } else {
+            console.log('ℹ️  Admin user already exists');
+        }
+    } catch (error: any) {
+        console.log('⚠️  Could not create admin user:', error?.message || 'Unknown error');
+        console.log('   You can create an admin user manually or through the API');
+    }
 
     console.log('🎉 Database seed completed!');
     console.log(`📊 Summary:`);

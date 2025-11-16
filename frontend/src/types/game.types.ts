@@ -67,6 +67,26 @@ export interface Card {
     isActive: boolean;
 }
 
+export interface Skill {
+    id: string;
+    name: string;
+    character: string;
+    type: 'attack' | 'defense' | 'utility';
+    damage?: number;
+    heal?: number;
+    shield?: number;
+    effects?: Array<{
+        type: string;
+        duration: number;
+        value?: number;
+    }>;
+    cooldown: number;
+    cost?: number;
+    targetType: 'single' | 'area' | 'self' | 'all';
+    description: string;
+    isActive: boolean;
+}
+
 export interface PlayerGameState {
     playerId: string;
     playerName: string;

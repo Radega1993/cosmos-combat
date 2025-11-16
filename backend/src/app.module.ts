@@ -9,6 +9,8 @@ import { GatewayModule } from './gateway/gateway.module';
 import { CharactersModule } from './characters/characters.module';
 import { CardsModule } from './cards/cards.module';
 import { GameModule } from './game/game.module';
+import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
     imports: [
@@ -29,6 +31,8 @@ import { GameModule } from './game/game.module';
             inject: [ConfigService],
         }),
         DatabaseModule,
+        AuthModule,
+        AdminModule,
         LobbyModule,
         GatewayModule,
         CharactersModule,

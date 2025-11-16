@@ -6,6 +6,8 @@ import { GameBalance, GameBalanceDocument } from '../database/schemas/game-balan
 import { Card, CardDocument } from '../database/schemas/card.schema';
 import { CharactersService } from '../characters/characters.service';
 import { CardsService } from '../cards/cards.service';
+import { SkillsService } from '../skills/skills.service';
+import { EffectsService } from '../effects/effects.service';
 import { LobbyService } from '../lobby/lobby.service';
 import { GameStateService } from './game-state.service';
 import { TurnPhase, TurnState, ActionResult } from './interfaces/turn.interface';
@@ -56,6 +58,8 @@ export class GameService {
         private cardModel: Model<CardDocument>,
         private charactersService: CharactersService,
         private cardsService: CardsService,
+        private skillsService: SkillsService,
+        private effectsService: EffectsService,
         private lobbyService: LobbyService,
         private gameStateService: GameStateService,
         private analyticsService: AnalyticsService,
@@ -234,10 +238,40 @@ export class GameService {
 
         // Phase: START
         // 1. Apply start-of-turn effects
-        const finishedFromEffects = await this.applyStartOfTurnEffects(gameId, currentPlayer.playerId);
-        if (finishedFromEffects) {
+        const effectsResult = await this.applyStartOfTurnEffects(gameId, currentPlayer.playerId, gameState.balanceVersion);
+        if (effectsResult.gameEnded) {
             // Game ended from start-of-turn effects
-            return finishedFromEffects;
+            return effectsResult.finishedState!;
+        }
+
+        // Apply damage from effects (no attacker for start-of-turn effects)
+        if (effectsResult.result.damage && effectsResult.result.damage > 0) {
+            const finishedState = await this.applyDamage(
+                gameId,
+                currentPlayer.playerId,
+                effectsResult.result.damage,
+                'effect',
+                undefined, // No attacker for start-of-turn effects
+            );
+            if (finishedState) {
+                return finishedState;
+            }
+        }
+
+        // Apply burn discard (discard a card)
+        if (effectsResult.result.cardsToDiscard && effectsResult.result.cardsToDiscard > 0) {
+            await this.discardRandomCards(gameId, currentPlayer.playerId, effectsResult.result.cardsToDiscard);
+        }
+
+        // Apply action reduction from paralysis/freeze
+        if (effectsResult.result.actionsReduced && effectsResult.result.actionsReduced > 0) {
+            gameState.actionsRemaining = Math.max(
+                0,
+                (gameState.actionsRemaining || 0) - effectsResult.result.actionsReduced,
+            );
+            if (gameState.turnState) {
+                gameState.turnState.actionsRemaining = gameState.actionsRemaining;
+            }
         }
 
         // 2. Draw cards
@@ -343,29 +377,77 @@ export class GameService {
     }
 
     /**
-     * Apply start-of-turn effects (e.g., burn damage)
-     * Returns GameState if game ended, null otherwise
+     * Apply start-of-turn effects using EffectsService
+     * Returns result with damage, actions reduced, cards to discard, and game state if ended
      */
-    private async applyStartOfTurnEffects(gameId: string, playerId: string): Promise<GameState | null> {
-        const player = this.gameStateService.getPlayerState(gameId, playerId);
-        if (!player) return null;
+    private async applyStartOfTurnEffects(
+        gameId: string,
+        playerId: string,
+        balanceVersion: string,
+    ): Promise<{ result: any; gameEnded: boolean; finishedState?: GameState }> {
+        const effectsResult = await this.effectsService.applyStartOfTurnEffects(
+            gameId,
+            playerId,
+            balanceVersion,
+        );
 
-        // Apply burn effects
-        const burnEffects = player.status.effects.filter((e) => e.type === 'burn');
-        let totalBurnDamage = 0;
-        for (const effect of burnEffects) {
-            totalBurnDamage += effect.value || 0;
-        }
-
-        if (totalBurnDamage > 0) {
-            const finishedState = await this.applyDamage(gameId, playerId, totalBurnDamage, 'burn');
-            if (finishedState) {
-                // Game ended due to burn damage
-                return finishedState;
+        // Check if damage would end the game
+        if (effectsResult.result.damage && effectsResult.result.damage > 0) {
+            const player = this.gameStateService.getPlayerState(gameId, playerId);
+            if (player && player.hp <= effectsResult.result.damage) {
+                // This will end the game, but we'll handle it in startTurn
+                return { ...effectsResult, gameEnded: false };
             }
         }
 
-        return null;
+        return { ...effectsResult, gameEnded: false };
+    }
+
+    /**
+     * Discard random cards from player's hand (for burn effect)
+     */
+    private async discardRandomCards(gameId: string, playerId: string, count: number): Promise<void> {
+        const player = this.gameStateService.getPlayerState(gameId, playerId);
+        if (!player || !player.hand || player.hand.length === 0) return;
+
+        const gameState = this.gameStateService.getGameState(gameId);
+        if (!gameState) return;
+
+        // Discard up to count cards (or all if less available)
+        const cardsToDiscard = Math.min(count, player.hand.length);
+        const discardedCards: string[] = [];
+
+        for (let i = 0; i < cardsToDiscard; i++) {
+            if (player.hand.length === 0) break;
+            // Randomly select a card to discard
+            const randomIndex = Math.floor(Math.random() * player.hand.length);
+            const cardId = player.hand[randomIndex];
+            discardedCards.push(cardId);
+            player.hand.splice(randomIndex, 1);
+        }
+
+        // Move discarded cards to shared discard
+        gameState.sharedDiscard.push(...discardedCards);
+
+        // Update player state
+        this.gameStateService.updatePlayerState(gameId, playerId, {
+            hand: player.hand,
+        });
+        this.gameStateService.setGameState(gameId, gameState);
+
+        // Record action for analytics
+        await this.analyticsService.recordAction(
+            gameId,
+            gameState.currentTurn || 1,
+            playerId,
+            player.playerName,
+            player.characterId,
+            'effect-discard',
+            {
+                effectType: 'burn',
+                cardsDiscarded: discardedCards.length,
+            },
+        );
     }
 
     /**
@@ -377,6 +459,7 @@ export class GameService {
 
     /**
      * Process effect durations and remove expired effects
+     * Also reduces cooldowns
      */
     private async processEffectDurations(gameId: string, playerId: string): Promise<void> {
         const player = this.gameStateService.getPlayerState(gameId, playerId);
@@ -390,10 +473,21 @@ export class GameService {
             }))
             .filter((effect) => effect.duration > 0);
 
+        // Reduce cooldowns
+        const newCooldowns: Record<string, number> = {};
+        for (const [skillId, cooldown] of Object.entries(player.status.cooldowns)) {
+            if (cooldown > 1) {
+                newCooldowns[skillId] = cooldown - 1;
+            }
+            // If cooldown is 1, it will be 0 next turn, so we don't add it
+        }
+
+        // Update player state
         this.gameStateService.updatePlayerState(gameId, playerId, {
             status: {
                 ...player.status,
                 effects: updatedEffects,
+                cooldowns: newCooldowns,
             },
         });
     }
@@ -506,20 +600,93 @@ export class GameService {
         let healAmount = 0;
         const effectsApplied: Array<{ type: string; duration: number }> = [];
 
-        if (card.damage) {
-            const target = targetId || this.getValidTarget(gameId, playerId, card.targetType);
-            if (!target) {
-                return { success: false, message: 'No valid target' };
-            }
-            damageDealt = card.damage;
-            const finishedState = await this.applyDamage(gameId, target, card.damage, 'card');
-            if (finishedState) {
-                // Game ended due to damage
-                return {
-                    success: true,
-                    message: `Card ${card.name} played - Game ended!`,
-                    gameState: finishedState,
-                };
+        if (card.damage || card.targetType === 'all') {
+            // Handle special dice-based attacks (Embate Furioso, Rayos Cósmicos)
+            if (card.id === 'embate-furioso' || card.id === 'rayos-cosmicos') {
+                const gameState = this.gameStateService.getGameState(gameId);
+                if (!gameState) {
+                    return { success: false, message: 'Game state not found' };
+                }
+                const numPlayers = gameState.players.filter((p) => p.hp > 0).length;
+                let totalDamage = 0;
+                const rolls: number[] = [];
+
+                // Roll dice for each player
+                for (let i = 0; i < numPlayers; i++) {
+                    const roll = Math.floor(Math.random() * 6) + 1;
+                    rolls.push(roll);
+                    if (roll > 3) {
+                        totalDamage += 1;
+                    }
+                }
+
+                if (totalDamage > 0) {
+                    const targets = this.getValidTargets(gameId, playerId, 'all');
+                    if (targets.length === 0) {
+                        return { success: false, message: 'No valid targets' };
+                    }
+                    // Each target receives 1 damage per successful roll
+                    const damagePerTarget = totalDamage;
+                    damageDealt = damagePerTarget * targets.length;
+                    const finishedState = await this.applyDamageToMultiple(
+                        gameId,
+                        targets,
+                        damagePerTarget,
+                        'card',
+                        playerId,
+                    );
+                    if (finishedState) {
+                        return {
+                            success: true,
+                            message: `Card ${card.name} played (rolls: ${rolls.join(', ')}) - Game ended!`,
+                            gameState: finishedState,
+                        };
+                    }
+                } else {
+                    return {
+                        success: true,
+                        message: `Card ${card.name} played (rolls: ${rolls.join(', ')}) - No damage dealt`,
+                        gameState: this.gameStateService.getGameState(gameId)!,
+                    };
+                }
+            } else if (card.targetType === 'all' || card.targetType === 'area') {
+                // Regular area/all attacks
+                const targets = this.getValidTargets(gameId, playerId, card.targetType);
+                if (targets.length === 0) {
+                    return { success: false, message: 'No valid targets' };
+                }
+                damageDealt = (card.damage || 0) * targets.length; // Total damage dealt
+                const finishedState = await this.applyDamageToMultiple(
+                    gameId,
+                    targets,
+                    card.damage || 0,
+                    'card',
+                    playerId,
+                );
+                if (finishedState) {
+                    // Game ended due to damage
+                    return {
+                        success: true,
+                        message: `Card ${card.name} played - Game ended!`,
+                        gameState: finishedState,
+                    };
+                }
+            } else {
+                // Single target attack
+                const target = targetId || this.getValidTarget(gameId, playerId, card.targetType);
+                if (!target) {
+                    return { success: false, message: 'No valid target' };
+                }
+                damageDealt = card.damage || 0;
+                const finishedState = await this.applyDamage(gameId, target, card.damage || 0, 'card', playerId);
+                if (finishedState) {
+                    // Game ended due to damage
+                    return {
+                        success: true,
+                        message: `Card ${card.name} played - Game ended!`,
+                        gameState: finishedState,
+                    };
+                }
             }
         }
 
@@ -539,7 +706,15 @@ export class GameService {
 
         if (card.effects && card.effects.length > 0) {
             effectsApplied.push(...card.effects);
-            await this.applyCardEffects(gameId, targetId || playerId, card.effects);
+            // Handle area/all effects
+            if (card.targetType === 'all' || card.targetType === 'area') {
+                const targets = this.getValidTargets(gameId, playerId, card.targetType);
+                await this.applyEffectsToMultiple(gameId, targets, card.effects);
+            } else {
+                // Single target effects
+                const target = targetId || playerId;
+                await this.applyCardEffects(gameId, target, card.effects);
+            }
         }
 
         // Record action for analytics
@@ -586,6 +761,151 @@ export class GameService {
     }
 
     /**
+     * Use a skill
+     */
+    async useSkill(
+        gameId: string,
+        playerId: string,
+        skillId: string,
+        targetId?: string,
+    ): Promise<ActionResult> {
+        const gameState = this.gameStateService.getGameState(gameId);
+        if (!gameState) {
+            return { success: false, message: 'Game state not found' };
+        }
+
+        // Validate it's player's turn
+        if (!this.gameStateService.isPlayerTurn(gameId, playerId)) {
+            return { success: false, message: 'Not your turn' };
+        }
+
+        // Validate actions remaining
+        if (gameState.actionsRemaining === undefined || gameState.actionsRemaining <= 0) {
+            return { success: false, message: 'No actions remaining' };
+        }
+
+        const player = this.gameStateService.getPlayerState(gameId, playerId);
+        if (!player) {
+            return { success: false, message: 'Player not found' };
+        }
+
+        // Get skill data
+        const skill = await this.skillsService.findOne(skillId);
+        if (!skill) {
+            return { success: false, message: 'Skill not found' };
+        }
+
+        // Validate skill belongs to player's character
+        if (skill.character !== player.characterId) {
+            return { success: false, message: 'Skill does not belong to your character' };
+        }
+
+        // Validate cooldown
+        const cooldownRemaining = player.status.cooldowns[skillId] || 0;
+        if (cooldownRemaining > 0) {
+            return {
+                success: false,
+                message: `Skill is on cooldown. ${cooldownRemaining} turn(s) remaining`
+            };
+        }
+
+        // Validate cost (if applicable)
+        // TODO: Implement resource/cost system if needed
+
+        // Get target player name for analytics
+        const targetPlayer = targetId ? this.gameStateService.getPlayerState(gameId, targetId) : null;
+
+        // Apply skill effects
+        let damageDealt = 0;
+        let healAmount = 0;
+        const effectsApplied: Array<{ type: string; duration: number }> = [];
+
+        if (skill.damage) {
+            const target = targetId || this.getValidTarget(gameId, playerId, skill.targetType);
+            if (!target) {
+                return { success: false, message: 'No valid target' };
+            }
+            damageDealt = skill.damage;
+            const finishedState = await this.applyDamage(gameId, target, skill.damage, 'skill', playerId);
+            if (finishedState) {
+                // Game ended due to damage
+                return {
+                    success: true,
+                    message: `Skill ${skill.name} used - Game ended!`,
+                    gameState: finishedState,
+                };
+            }
+        }
+
+        if (skill.heal) {
+            healAmount = skill.heal;
+            await this.applyHeal(gameId, playerId, skill.heal);
+        }
+
+        if (skill.shield) {
+            await this.applyShield(gameId, playerId, skill.shield);
+        }
+
+        if (skill.effects && skill.effects.length > 0) {
+            effectsApplied.push(...skill.effects);
+            // Handle area/all effects
+            if (skill.targetType === 'all' || skill.targetType === 'area') {
+                const targets = this.getValidTargets(gameId, playerId, skill.targetType);
+                await this.applyEffectsToMultiple(gameId, targets, skill.effects);
+            } else {
+                // Single target effects (default to self if no target specified)
+                const target = targetId || playerId;
+                await this.applyCardEffects(gameId, target, skill.effects);
+            }
+        }
+
+        // Apply cooldown
+        const newCooldowns = { ...player.status.cooldowns };
+        newCooldowns[skillId] = skill.cooldown;
+
+        // Consume action
+        gameState.actionsRemaining = (gameState.actionsRemaining || 0) - 1;
+        if (gameState.turnState) {
+            gameState.turnState.actionsRemaining = gameState.actionsRemaining;
+        }
+
+        // Update player state
+        this.gameStateService.updatePlayerState(gameId, playerId, {
+            status: {
+                ...player.status,
+                cooldowns: newCooldowns,
+            },
+        });
+        this.gameStateService.setGameState(gameId, gameState);
+
+        // Record action for analytics
+        const gameStateForTurn = this.gameStateService.getGameState(gameId);
+        await this.analyticsService.recordAction(
+            gameId,
+            gameStateForTurn?.currentTurn || 1,
+            player.playerId,
+            player.playerName,
+            player.characterId,
+            'use-skill',
+            {
+                skillId: skill.id,
+                skillName: skill.name,
+                targetId: targetId || undefined,
+                targetName: targetPlayer?.playerName,
+                damage: damageDealt || undefined,
+                heal: healAmount || undefined,
+                effectsApplied: effectsApplied.length > 0 ? effectsApplied : undefined,
+            },
+        );
+
+        return {
+            success: true,
+            message: `Skill ${skill.name} used`,
+            gameState,
+        };
+    }
+
+    /**
      * Perform basic attack
      */
     async performAttack(
@@ -621,13 +941,13 @@ export class GameService {
             return { success: false, message: 'Character not found' };
         }
 
-        // Calculate damage (attack - defense)
+        // Calculate damage (basic attack power)
+        // Shields will be applied in applyDamage() method
         const attackPower = attackerChar.baseStats.attack;
-        const defense = target.status.shields || 0; // Shields absorb damage first
-        const damage = Math.max(1, attackPower - defense);
+        const damage = attackPower;
 
         // Apply damage
-        const finishedState = await this.applyDamage(gameId, targetId, damage, 'attack');
+        const finishedState = await this.applyDamage(gameId, targetId, damage, 'attack', attackerId);
         if (finishedState) {
             // Game ended due to attack
             return {
@@ -670,15 +990,46 @@ export class GameService {
     /**
      * Apply damage to a player
      * Returns GameState if game ended, null otherwise
+     * Also handles counterattacks (damage reflection)
      */
     private async applyDamage(
         gameId: string,
         playerId: string,
         damage: number,
         source: string,
+        attackerId?: string,
     ): Promise<GameState | null> {
         const player = this.gameStateService.getPlayerState(gameId, playerId);
         if (!player) return null;
+
+        const gameState = this.gameStateService.getGameState(gameId);
+        if (!gameState) return null;
+
+        // Get balance for effect configurations
+        const balance = await this.gameBalanceModel.findOne({ version: gameState.balanceVersion, isActive: true }).exec();
+        if (!balance) return null;
+
+        // Calculate counterattack damage before applying shields
+        let counterDamage = 0;
+        const counterEffects = player.status.effects.filter((e) => e.type === 'counter');
+
+        for (const counterEffect of counterEffects) {
+            const effectConfig = balance.effects['counter'];
+            if (!effectConfig) continue;
+
+            // Check if counter requires a roll
+            if (effectConfig.requiresRoll && effectConfig.rollThreshold) {
+                const roll = Math.floor(Math.random() * 6) + 1;
+                if (roll < effectConfig.rollThreshold) {
+                    continue; // Counter failed the roll
+                }
+            }
+
+            // Calculate reflected damage
+            const reflectPercentage = counterEffect.value || effectConfig.damageReflected || 0;
+            const reflected = Math.floor(damage * reflectPercentage);
+            counterDamage += reflected;
+        }
 
         // Apply shields first
         let remainingDamage = damage;
@@ -697,6 +1048,44 @@ export class GameService {
                 shields: player.status.shields,
             },
         });
+
+        // Apply counterattack damage to attacker (if applicable)
+        if (counterDamage > 0 && attackerId && attackerId !== playerId) {
+            const attacker = this.gameStateService.getPlayerState(gameId, attackerId);
+            if (attacker) {
+                // Minimum 1 damage for counterattack
+                const finalCounterDamage = Math.max(1, counterDamage);
+
+                // Record counterattack action
+                await this.analyticsService.recordAction(
+                    gameId,
+                    gameState.currentTurn || 1,
+                    playerId,
+                    player.playerName,
+                    player.characterId,
+                    'counterattack',
+                    {
+                        targetId: attackerId,
+                        targetName: attacker.playerName,
+                        damage: finalCounterDamage,
+                        originalDamage: damage,
+                    },
+                );
+
+                // Apply counterattack damage to attacker
+                const counterFinishedState = await this.applyDamage(
+                    gameId,
+                    attackerId,
+                    finalCounterDamage,
+                    'counterattack',
+                    playerId, // The defender is now the attacker
+                );
+                if (counterFinishedState) {
+                    // Game ended from counterattack
+                    return counterFinishedState;
+                }
+            }
+        }
 
         // Check for defeat
         if (newHp === 0) {
@@ -775,7 +1164,78 @@ export class GameService {
             return opponents[0]?.playerId;
         }
 
+        // For 'area' and 'all', we return undefined and handle it separately
         return undefined;
+    }
+
+    /**
+     * Get valid targets for area/all attacks
+     * Returns array of player IDs that should be affected
+     */
+    private getValidTargets(
+        gameId: string,
+        playerId: string,
+        targetType: 'single' | 'area' | 'self' | 'all',
+    ): string[] {
+        const gameState = this.gameStateService.getGameState(gameId);
+        if (!gameState) return [];
+
+        if (targetType === 'self') {
+            return [playerId];
+        }
+
+        if (targetType === 'all') {
+            // All opponents (exclude self)
+            return gameState.players
+                .filter((p) => p.playerId !== playerId && p.hp > 0)
+                .map((p) => p.playerId);
+        }
+
+        if (targetType === 'area') {
+            // All opponents (exclude self) - same as 'all' for now
+            // Future: Could implement radius-based area attacks
+            return gameState.players
+                .filter((p) => p.playerId !== playerId && p.hp > 0)
+                .map((p) => p.playerId);
+        }
+
+        // For 'single', return empty array (use getValidTarget instead)
+        return [];
+    }
+
+    /**
+     * Apply damage to multiple targets (area/all attacks)
+     */
+    private async applyDamageToMultiple(
+        gameId: string,
+        targets: string[],
+        damage: number,
+        source: string,
+        attackerId: string,
+    ): Promise<GameState | null> {
+        let finishedState: GameState | null = null;
+
+        for (const targetId of targets) {
+            const result = await this.applyDamage(gameId, targetId, damage, source, attackerId);
+            if (result && !finishedState) {
+                finishedState = result; // Game ended
+            }
+        }
+
+        return finishedState;
+    }
+
+    /**
+     * Apply effects to multiple targets
+     */
+    private async applyEffectsToMultiple(
+        gameId: string,
+        targets: string[],
+        effects: Array<{ type: string; duration: number; value?: number }>,
+    ): Promise<void> {
+        for (const targetId of targets) {
+            await this.applyCardEffects(gameId, targetId, effects);
+        }
     }
 
     /**
