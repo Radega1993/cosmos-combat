@@ -1,0 +1,105 @@
+{
+    "cards": [
+        {
+            "id": "attack-1",
+            "name": "Ataque Básico",
+            "type": "attack",
+            "cost": 0,
+            "damage": 10,
+            "description": "Un ataque básico que inflige daño moderado.",
+            "targetType": "single"
+        },
+        {
+            "id": "attack-2",
+            "name": "Golpe Fuerte",
+            "type": "attack",
+            "cost": 1,
+            "damage": 15,
+            "description": "Un ataque poderoso que inflige más daño.",
+            "targetType": "single"
+        },
+        {
+            "id": "attack-3",
+            "name": "Ataque de Área",
+            "type": "attack",
+            "cost": 2,
+            "damage": 8,
+            "description": "Ataca a todos los enemigos con daño reducido.",
+            "targetType": "area"
+        },
+        {
+            "id": "defend-1",
+            "name": "Defensa",
+            "type": "defense",
+            "cost": 0,
+            "defense": 5,
+            "description": "Aumenta tu defensa este turno.",
+            "targetType": "self"
+        },
+        {
+            "id": "defend-2",
+            "name": "Escudo",
+            "type": "defense",
+            "cost": 1,
+            "shield": 10,
+            "description": "Crea un escudo que absorbe daño.",
+            "targetType": "self"
+        },
+        {
+            "id": "heal-1",
+            "name": "Curación",
+            "type": "utility",
+            "cost": 1,
+            "heal": 15,
+            "description": "Restaura puntos de vida.",
+            "targetType": "self"
+        },
+        {
+            "id": "spell-fire",
+            "name": "Bola de Fuego",
+            "type": "attack",
+            "cost": 2,
+            "damage": 12,
+            "effects": [
+                {
+                    "type": "burn",
+                    "duration": 2,
+                    "value": 5
+                }
+            ],
+            "description": "Lanza una bola de fuego que quema al enemigo.",
+            "targetType": "single"
+        },
+        {
+            "id": "spell-ice",
+            "name": "Rayo de Hielo",
+            "type": "attack",
+            "cost": 2,
+            "damage": 10,
+            "effects": [
+                {
+                    "type": "freeze",
+                    "duration": 1
+                }
+            ],
+            "description": "Congela al enemigo reduciendo sus acciones.",
+            "targetType": "single"
+        },
+        {
+            "id": "poison-attack",
+            "name": "Ataque Venenoso",
+            "type": "attack",
+            "cost": 1,
+            "damage": 8,
+            "effects": [
+                {
+                    "type": "poison",
+                    "duration": 3,
+                    "value": 3
+                }
+            ],
+            "description": "Envenena al objetivo causando daño por turno.",
+            "targetType": "single"
+        }
+    ]
+}

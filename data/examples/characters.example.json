@@ -1,0 +1,74 @@
+{
+    "characters": [
+        {
+            "id": "warrior",
+            "name": "Guerrero",
+            "description": "Un luchador cuerpo a cuerpo con alta resistencia y defensa.",
+            "maxHp": 100,
+            "baseStats": {
+                "attack": 10,
+                "defense": 5,
+                "speed": 3
+            },
+            "skills": [
+                "slash",
+                "shield-bash",
+                "berserker-rage"
+            ],
+            "deck": [
+                "attack-1",
+                "attack-2",
+                "attack-3",
+                "defend-1",
+                "defend-2",
+                "heal-1"
+            ]
+        },
+        {
+            "id": "mage",
+            "name": "Mago",
+            "description": "Maestro de las artes arcanas con poderosos hechizos.",
+            "maxHp": 80,
+            "baseStats": {
+                "attack": 12,
+                "defense": 3,
+                "speed": 4
+            },
+            "skills": [
+                "fireball",
+                "ice-bolt",
+                "arcane-shield"
+            ],
+            "deck": [
+                "spell-fire",
+                "spell-ice",
+                "spell-lightning",
+                "spell-heal",
+                "spell-shield"
+            ]
+        },
+        {
+            "id": "rogue",
+            "name": "Pícaro",
+            "description": "Asesino sigiloso con alta velocidad y ataques críticos.",
+            "maxHp": 90,
+            "baseStats": {
+                "attack": 8,
+                "defense": 4,
+                "speed": 5
+            },
+            "skills": [
+                "backstab",
+                "poison-blade",
+                "shadow-step"
+            ],
+            "deck": [
+                "dagger-strike",
+                "poison-attack",
+                "dodge",
+                "stealth",
+                "critical-hit"
+            ]
+        }
+    ]
+}

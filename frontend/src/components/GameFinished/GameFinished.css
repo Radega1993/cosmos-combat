@@ -1,0 +1,281 @@
+.game-finished {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  max-width: 900px;
+  margin: 2rem auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.finished-content {
+  text-align: center;
+}
+
+.finished-title {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  text-shadow: 0 0 30px rgba(129, 140, 248, 0.5);
+}
+
+.winner-announcement {
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.winner-announcement.you-won {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%);
+  border: 2px solid rgba(74, 222, 128, 0.6);
+  box-shadow: 0 0 40px rgba(74, 222, 128, 0.5);
+}
+
+.winner-announcement.you-lost {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.winner-announcement h3 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0 0 0.5rem 0;
+  color: #fff;
+  font-weight: 700;
+}
+
+.winner-announcement.you-won h3 {
+  color: #4ade80;
+  text-shadow: 0 0 25px rgba(74, 222, 128, 0.7);
+}
+
+.winner-announcement p {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.final-stats {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+}
+
+.final-stats h4 {
+  color: #818cf8;
+  margin-bottom: 1rem;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+  font-weight: 600;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  border-color: rgba(102, 126, 234, 0.4);
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.stat-label {
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-value {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: #818cf8;
+}
+
+.final-standings {
+  margin-bottom: 2rem;
+}
+
+.final-standings h4 {
+  color: #a78bfa;
+  margin-bottom: 1rem;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+  font-weight: 600;
+}
+
+.standings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.standing-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.standing-item:hover {
+  border-color: rgba(102, 126, 234, 0.4);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.standing-item.your-standing {
+  border-color: rgba(102, 126, 234, 0.6);
+  background: rgba(102, 126, 234, 0.15);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.standing-item.winner {
+  border-color: rgba(74, 222, 128, 0.6);
+  background: rgba(74, 222, 128, 0.15);
+  box-shadow: 0 0 25px rgba(74, 222, 128, 0.4);
+}
+
+.standing-item.defeated {
+  opacity: 0.6;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.position {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  min-width: 40px;
+}
+
+.player-name {
+  flex: 1;
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
+  font-weight: 600;
+  color: #fff;
+}
+
+.final-hp {
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
+  color: rgba(255, 255, 255, 0.8);
+  min-width: 100px;
+  text-align: right;
+}
+
+.winner-badge {
+  padding: 0.3rem 0.8rem;
+  background: rgba(74, 222, 128, 0.3);
+  border: 1px solid rgba(74, 222, 128, 0.6);
+  border-radius: 8px;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.draw-announcement {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 15px;
+  margin-bottom: 2rem;
+}
+
+.draw-announcement h3 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: #818cf8;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.draw-announcement p {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.game-saved-notice {
+  padding: 1rem;
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  border-radius: 10px;
+  margin-top: 1.5rem;
+}
+
+.game-saved-notice p {
+  margin: 0;
+  color: #4ade80;
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-finished {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .winner-announcement {
+    padding: 1.5rem;
+  }
+
+  .final-stats {
+    padding: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .standing-item {
+    padding: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .final-hp {
+    min-width: auto;
+    text-align: left;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-finished {
+    padding: 1rem;
+  }
+
+  .winner-announcement {
+    padding: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .standing-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .position {
+    min-width: auto;
+  }
+}

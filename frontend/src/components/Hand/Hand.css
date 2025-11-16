@@ -1,0 +1,150 @@
+.hand-container {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.hand-container h3 {
+  margin-bottom: 1rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+.hand-empty {
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  font-size: 1rem;
+}
+
+.hand-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.hand-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hand-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hand-card:hover::before {
+  opacity: 1;
+}
+
+.hand-card:hover {
+  border-color: rgba(102, 126, 234, 0.6);
+  background: rgba(102, 126, 234, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.card-image {
+  width: 100%;
+  height: 140px;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card-info {
+  position: relative;
+  z-index: 1;
+}
+
+.card-info h4 {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  margin-bottom: 0.25rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.card-info p {
+  font-size: clamp(0.75rem, 1.8vw, 0.8rem);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+  min-height: 30px;
+  line-height: 1.3;
+}
+
+.card-stats {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-stats span {
+  padding: 0.25rem 0.5rem;
+  background: rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  border-radius: 6px;
+  font-size: clamp(0.7rem, 1.5vw, 0.75rem);
+  color: #818cf8;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hand-container {
+    padding: 1rem;
+  }
+
+  .hand-cards {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .card-image {
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hand-cards {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .hand-card {
+    padding: 0.5rem;
+  }
+
+  .card-image {
+    height: 100px;
+    margin-bottom: 0.5rem;
+  }
+}

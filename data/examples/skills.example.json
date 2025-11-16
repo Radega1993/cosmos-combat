@@ -1,0 +1,142 @@
+{
+    "skills": [
+        {
+            "id": "slash",
+            "name": "Tajo",
+            "character": "warrior",
+            "type": "attack",
+            "damage": 20,
+            "cooldown": 2,
+            "cost": 0,
+            "targetType": "single",
+            "description": "Un tajo poderoso que inflige daño significativo."
+        },
+        {
+            "id": "shield-bash",
+            "name": "Golpe con Escudo",
+            "character": "warrior",
+            "type": "attack",
+            "damage": 15,
+            "effects": [
+                {
+                    "type": "paralysis",
+                    "duration": 1
+                }
+            ],
+            "cooldown": 3,
+            "cost": 0,
+            "targetType": "single",
+            "description": "Golpea con el escudo causando daño y paralizando al enemigo."
+        },
+        {
+            "id": "berserker-rage",
+            "name": "Ira del Berserker",
+            "character": "warrior",
+            "type": "utility",
+            "effects": [
+                {
+                    "type": "buff",
+                    "duration": 3,
+                    "value": {
+                        "attack": 5
+                    }
+                }
+            ],
+            "cooldown": 5,
+            "cost": 0,
+            "targetType": "self",
+            "description": "Aumenta el ataque durante varios turnos."
+        },
+        {
+            "id": "fireball",
+            "name": "Bola de Fuego",
+            "character": "mage",
+            "type": "attack",
+            "damage": 25,
+            "effects": [
+                {
+                    "type": "burn",
+                    "duration": 2,
+                    "value": 5
+                }
+            ],
+            "cooldown": 3,
+            "cost": 2,
+            "targetType": "single",
+            "description": "Lanza una poderosa bola de fuego que quema al enemigo."
+        },
+        {
+            "id": "ice-bolt",
+            "name": "Rayo de Hielo",
+            "character": "mage",
+            "type": "attack",
+            "damage": 20,
+            "effects": [
+                {
+                    "type": "freeze",
+                    "duration": 2
+                }
+            ],
+            "cooldown": 3,
+            "cost": 2,
+            "targetType": "single",
+            "description": "Congela al enemigo reduciendo sus acciones."
+        },
+        {
+            "id": "arcane-shield",
+            "name": "Escudo Arcano",
+            "character": "mage",
+            "type": "defense",
+            "shield": 20,
+            "cooldown": 4,
+            "cost": 1,
+            "targetType": "self",
+            "description": "Crea un escudo mágico que absorbe daño."
+        },
+        {
+            "id": "backstab",
+            "name": "Puñalada por la Espalda",
+            "character": "rogue",
+            "type": "attack",
+            "damage": 30,
+            "cooldown": 4,
+            "cost": 0,
+            "targetType": "single",
+            "description": "Un ataque crítico que inflige gran daño."
+        },
+        {
+            "id": "poison-blade",
+            "name": "Hoja Envenenada",
+            "character": "rogue",
+            "type": "attack",
+            "damage": 15,
+            "effects": [
+                {
+                    "type": "poison",
+                    "duration": 3,
+                    "value": 4
+                }
+            ],
+            "cooldown": 3,
+            "cost": 1,
+            "targetType": "single",
+            "description": "Envenena al objetivo causando daño continuo."
+        },
+        {
+            "id": "shadow-step",
+            "name": "Paso de Sombra",
+            "character": "rogue",
+            "type": "utility",
+            "effects": [
+                {
+                    "type": "dodge",
+                    "duration": 1
+                }
+            ],
+            "cooldown": 3,
+            "cost": 1,
+            "targetType": "self",
+            "description": "Esquiva el próximo ataque."
+        }
+    ]
+}

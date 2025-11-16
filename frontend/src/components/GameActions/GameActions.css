@@ -1,0 +1,163 @@
+.game-actions {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+}
+
+.waiting-message {
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  font-size: 1rem;
+}
+
+.target-selection {
+  padding: 1rem;
+  background: rgba(255, 215, 0, 0.15);
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.target-selection p {
+  margin: 0 0 0.5rem 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.cancel-button {
+  padding: 0.5rem 1rem;
+  background: rgba(239, 68, 68, 0.2);
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  color: #fca5a5;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.cancel-button:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+.actions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.actions-header h3 {
+  margin: 0;
+  color: #a78bfa;
+  font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+  font-weight: 600;
+}
+
+.actions-remaining {
+  padding: 0.5rem 1rem;
+  background: rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  border-radius: 8px;
+  color: #818cf8;
+  font-weight: 700;
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  flex: 1;
+  min-width: 150px;
+  padding: 1rem 2rem;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: clamp(0.95rem, 2vw, 1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.attack-button {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.attack-button:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.end-turn-button {
+  border-color: rgba(74, 222, 128, 0.4);
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+}
+
+.end-turn-button:hover:not(:disabled) {
+  background: rgba(74, 222, 128, 0.2);
+  border-color: rgba(74, 222, 128, 0.6);
+  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-actions {
+    padding: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-actions {
+    padding: 0.75rem;
+  }
+
+  .actions-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}

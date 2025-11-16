@@ -1,0 +1,98 @@
+.turn-indicator {
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.turn-indicator.my-turn {
+  border-color: rgba(102, 126, 234, 0.6);
+  background: rgba(102, 126, 234, 0.15);
+  box-shadow: 0 0 25px rgba(102, 126, 234, 0.4);
+}
+
+.turn-info h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  color: #818cf8;
+  font-weight: 700;
+}
+
+.current-player {
+  margin-bottom: 0.75rem;
+}
+
+.player-name {
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.you-badge {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  background: rgba(102, 126, 234, 0.3);
+  border: 1px solid rgba(102, 126, 234, 0.6);
+  border-radius: 6px;
+  font-size: clamp(0.75rem, 1.8vw, 0.8rem);
+  color: #818cf8;
+  font-weight: 600;
+}
+
+.actions-info {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.actions-remaining {
+  padding: 0.5rem 1rem;
+  background: rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  border-radius: 8px;
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
+  color: #818cf8;
+  font-weight: 700;
+}
+
+.turn-phase {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+  font-size: clamp(0.8rem, 1.8vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.phase-name {
+  text-transform: capitalize;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .turn-indicator {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .actions-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .turn-indicator {
+    padding: 0.75rem;
+  }
+
+  .current-player {
+    margin-bottom: 0.5rem;
+  }
+}
