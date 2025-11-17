@@ -53,15 +53,20 @@ function PlayerStatus({
 }: PlayerStatusProps) {
     const [character, setCharacter] = useState<Character | null>(null);
     const [showDetails, setShowDetails] = useState(false);
+    const [isPinned, setIsPinned] = useState(false);
     const [skills, setSkills] = useState<any[]>([]);
     const isAlive = player.hp > 0;
 
     useEffect(() => {
-        if (player.characterId && !character) {
-            loadCharacterData();
+        if (player.characterId) {
+            // Always try to load character data to get the image from database
+            // This ensures we have the correct image path if it was updated in admin
+            if (!character || character.id !== player.characterId) {
+                loadCharacterData();
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [player.characterId]); // Only load once when characterId changes
+    }, [player.characterId]); // Load when characterId changes
 
     const loadCharacterData = async () => {
         try {
@@ -69,7 +74,9 @@ function PlayerStatus({
                 apiService.getCharacter(player.characterId),
                 apiService.getSkills(player.characterId),
             ]);
-            setCharacter(charData);
+            if (charData) {
+                setCharacter(charData);
+            }
             setSkills(charSkills || []);
         } catch (error) {
             console.error('Error loading character data:', error);
@@ -80,40 +87,52 @@ function PlayerStatus({
         if (selectingTarget && onSelectTarget && isAlive && !isMyPlayer) {
             onSelectTarget(player.playerId);
         } else if (!selectingTarget) {
-            // Toggle details on mobile
-            if (window.innerWidth <= 768) {
-                setShowDetails(!showDetails);
+            // Toggle pinned state on click
+            if (isPinned) {
+                setIsPinned(false);
+                setShowDetails(false);
+            } else {
+                setIsPinned(true);
+                setShowDetails(true);
             }
         }
     };
 
     const handleMouseEnter = () => {
-        // Show details on hover for desktop
-        if (window.innerWidth > 768) {
+        // Show details on hover for desktop (if not pinned)
+        if (window.innerWidth > 768 && !isPinned) {
             setShowDetails(true);
         }
     };
 
     const handleMouseLeave = () => {
-        // Hide details on mouse leave for desktop
-        if (window.innerWidth > 768) {
+        // Hide details on mouse leave for desktop (if not pinned)
+        if (window.innerWidth > 768 && !isPinned) {
             setShowDetails(false);
         }
     };
 
+    const handleCloseDetails = () => {
+        setIsPinned(false);
+        setShowDetails(false);
+    };
+
     const getCharacterImagePath = () => {
-        if (!player.characterId) return '/deck_img/personajes/back personajes.png';
-        // Use character image if available, otherwise use standard path based on characterId
-        // Character IDs: strike, blaze, shadow, thunder, frost, ironclad
+        if (!player.characterId) return null; // Return null instead of non-existent back image
+
+        // Priority 1: Use character.image from loaded data (if available)
         if (character?.image) {
-            // If image path starts with /deck_img, use it as is, otherwise prepend it
-            return character.image.startsWith('/deck_img')
-                ? character.image
-                : `/deck_img${character.image.startsWith('/') ? '' : '/'}${character.image}`;
+            // Ensure the path starts with /deck_img
+            if (character.image.startsWith('/deck_img')) {
+                return character.image;
+            }
+            // If it's a relative path, prepend /deck_img
+            return `/deck_img${character.image.startsWith('/') ? '' : '/'}${character.image}`;
         }
-        // Fallback to standard path - this works immediately without waiting for character data
-        const imagePath = `/deck_img/personajes/${player.characterId}.png`;
-        return imagePath;
+
+        // Priority 2: Use standard path based on characterId (works immediately)
+        // This ensures images show up even before character data is loaded
+        return `/deck_img/personajes/${player.characterId}.png`;
     };
 
     return (
@@ -125,26 +144,40 @@ function PlayerStatus({
                 onMouseLeave={handleMouseLeave}
             >
                 <div className="character-visual">
+                    {/* Character Image - Clean, no overlays */}
                     <div className="character-image-wrapper">
-                        <img
-                            src={getCharacterImagePath()}
-                            alt={player.characterId || 'Desconocido'}
-                            className="character-image"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/deck_img/personajes/back personajes.png';
-                            }}
-                        />
-                        <div className="hp-overlay">
-                            <div className="hp-badge">
-                                <span className="hp-value">{player.hp}</span>
-                                <span className="hp-separator">/</span>
-                                <span className="hp-max">{player.maxHp}</span>
-                            </div>
-                        </div>
-                        {isCurrentPlayer && (
-                            <div className="turn-indicator-overlay">
-                                <span className="turn-text">TU TURNO</span>
-                            </div>
+                        {getCharacterImagePath() && (
+                            <img
+                                key={`img-${player.characterId}-${character?.image || player.characterId}`}
+                                src={getCharacterImagePath() || undefined}
+                                alt={player.characterId || 'Desconocido'}
+                                className="character-image"
+                                loading="lazy"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    // Prevent infinite loops - use data attribute to track attempts
+                                    const attempts = parseInt(target.getAttribute('data-error-attempts') || '0');
+
+                                    if (attempts >= 1) {
+                                        // Already tried fallback, stop trying to prevent infinite loops
+                                        target.style.display = 'none';
+                                        return;
+                                    }
+
+                                    target.setAttribute('data-error-attempts', '1');
+
+                                    const currentSrc = target.src;
+                                    const standardPath = `/deck_img/personajes/${player.characterId}.png`;
+
+                                    // Only try fallback once if we haven't tried it yet
+                                    if (!currentSrc.includes(standardPath)) {
+                                        target.src = standardPath;
+                                    } else {
+                                        // Already tried fallback, hide image
+                                        target.style.display = 'none';
+                                    }
+                                }}
+                            />
                         )}
                         {!isAlive && (
                             <div className="defeated-overlay">
@@ -152,132 +185,208 @@ function PlayerStatus({
                             </div>
                         )}
                     </div>
-                    <div className="character-name">
-                        {player.playerName || player.characterId || 'Desconocido'}
-                    </div>
-                    {player.status.shields > 0 && (
-                        <div className="shield-badge">
-                            🛡️ {player.status.shields}
+
+                    {/* Character Info Section - Below image */}
+                    <div className="character-info-section">
+                        {/* Name and HP Row */}
+                        <div className="character-header-row">
+                            <div className="character-name">
+                                {player.playerName || player.characterId || 'Desconocido'}
+                            </div>
+                            <div className="hp-badge">
+                                <span className="hp-value">{player.hp}</span>
+                                <span className="hp-separator">/</span>
+                                <span className="hp-max">{player.maxHp}</span>
+                            </div>
+                            {isCurrentPlayer && (
+                                <div className="turn-badge">
+                                    <span className="turn-text">TU TURNO</span>
+                                </div>
+                            )}
                         </div>
-                    )}
+
+                        {/* Character Stats - Most Important Info */}
+                        {character && (
+                            <div className="character-stats-compact">
+                                <div className="stat-compact-item">
+                                    <span className="stat-compact-icon">⚔️</span>
+                                    <span className="stat-compact-value">{character.baseStats.attack}</span>
+                                </div>
+                                <div className="stat-compact-item">
+                                    <span className="stat-compact-icon">🛡️</span>
+                                    <span className="stat-compact-value">{character.baseStats.defense}</span>
+                                </div>
+                                <div className="stat-compact-item">
+                                    <span className="stat-compact-icon">⚡</span>
+                                    <span className="stat-compact-value">{character.baseStats.speed}</span>
+                                </div>
+                                {player.status.shields > 0 && (
+                                    <div className="stat-compact-item stat-compact-shield">
+                                        <span className="stat-compact-icon">🛡️</span>
+                                        <span className="stat-compact-value">{player.status.shields}</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Active Effects - Compact Display */}
+                        {player.status.effects.length > 0 && (
+                            <div className="character-effects-compact">
+                                {player.status.effects.map((effect, index) => {
+                                    const effectConfig = getEffectConfig(effect.type);
+                                    return (
+                                        <div key={index} className={`effect-compact-badge effect-${effect.type}`} title={`${effectConfig.name} (${effect.duration} turnos)`}>
+                                            <span className="effect-compact-icon">{effectConfig.icon}</span>
+                                            <span className="effect-compact-duration">{effect.duration}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             {showDetails && (
                 <div className="character-details-panel">
                     <div className="details-header">
                         <h4>{character?.name || player.characterId || 'Desconocido'}</h4>
-                        <button className="close-details" onClick={() => setShowDetails(false)}>
+                        <button className="close-details" onClick={handleCloseDetails}>
                             ×
                         </button>
                     </div>
                     <div className="details-content">
                         {character && (
                             <>
-                                <div className="details-section">
-                                    <h5>Estadísticas Base</h5>
-                                    <div className="stats-grid">
-                                        {character.baseStats.attack !== undefined && (
-                                            <div className="stat-item">
-                                                <span className="stat-label">Ataque</span>
-                                                <span className="stat-value">{character.baseStats.attack}</span>
-                                            </div>
-                                        )}
-                                        {character.baseStats.defense !== undefined && (
-                                            <div className="stat-item">
-                                                <span className="stat-label">Defensa</span>
-                                                <span className="stat-value">{character.baseStats.defense}</span>
-                                            </div>
-                                        )}
-                                        {character.baseStats.speed !== undefined && (
-                                            <div className="stat-item">
-                                                <span className="stat-label">Velocidad</span>
-                                                <span className="stat-value">{character.baseStats.speed}</span>
-                                            </div>
-                                        )}
-                                        {character.baseStats.accuracy && (
-                                            <div className="stat-item">
-                                                <span className="stat-label">Acierto</span>
-                                                <span className="stat-value">{character.baseStats.accuracy}</span>
-                                            </div>
-                                        )}
-                                        {character.baseStats.dodge && (
-                                            <div className="stat-item">
-                                                <span className="stat-label">Esquiva</span>
-                                                <span className="stat-value">{character.baseStats.dodge}</span>
-                                            </div>
-                                        )}
-                                    </div>
+                                {/* Character Preview */}
+                                <div className="details-character-preview">
+                                    <div
+                                        className="details-preview-image"
+                                        style={{
+                                            backgroundImage: `url(${getCharacterImagePath() || '/deck_img/personajes/back personajes.png'})`,
+                                        }}
+                                    />
+                                    <h5 className="details-preview-name">{character.name}</h5>
                                 </div>
 
+                                {/* Character Info - Same format as modal */}
+                                <div className="details-character-info">
+                                    <div className="details-info-row">
+                                        <span className="details-info-label">Vida:</span>
+                                        <span className="details-info-value">{player.hp} / {player.maxHp}</span>
+                                    </div>
+                                    <div className="details-info-row">
+                                        <span className="details-info-label">Ataque:</span>
+                                        <span className="details-info-value">{character.baseStats.attack}</span>
+                                    </div>
+                                    <div className="details-info-row">
+                                        <span className="details-info-label">Defensa:</span>
+                                        <span className="details-info-value">{character.baseStats.defense}</span>
+                                    </div>
+                                    <div className="details-info-row">
+                                        <span className="details-info-label">Velocidad:</span>
+                                        <span className="details-info-value">{character.baseStats.speed}</span>
+                                    </div>
+                                    {character.baseStats.accuracy && (
+                                        <div className="details-info-row">
+                                            <span className="details-info-label">Acierto:</span>
+                                            <span className="details-info-value">{character.baseStats.accuracy}</span>
+                                        </div>
+                                    )}
+                                    {character.baseStats.dodge && (
+                                        <div className="details-info-row">
+                                            <span className="details-info-label">Esquiva:</span>
+                                            <span className="details-info-value">{character.baseStats.dodge}</span>
+                                        </div>
+                                    )}
+                                    {player.status.shields > 0 && (
+                                        <div className="details-info-row">
+                                            <span className="details-info-label">Escudos:</span>
+                                            <span className="details-info-value">{player.status.shields}</span>
+                                        </div>
+                                    )}
+                                    {character.description && (
+                                        <div className="details-info-description">
+                                            <p>{character.description}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Attributes */}
                                 {character.attributes && Object.keys(character.attributes).length > 0 && (
-                                    <div className="details-section">
-                                        <h5>Atributos</h5>
-                                        <div className="attributes-list">
-                                            {character.attributes.fireResistance !== undefined && (
-                                                <div className="attribute-item">
-                                                    <span className="attribute-icon">🔥</span>
-                                                    <span>Resistencia al fuego: {character.attributes.fireResistance}</span>
+                                    <div className="details-attributes-section">
+                                        <div className="details-attributes-label">Atributos Especiales</div>
+                                        <div className="details-attributes-list">
+                                            {character.attributes.fireResistance !== undefined && character.attributes.fireResistance > 0 && (
+                                                <div className="details-attribute-badge">
+                                                    <span className="details-attr-icon">🔥</span>
+                                                    <span className="details-attr-text">Res. Fuego: {character.attributes.fireResistance}</span>
                                                 </div>
                                             )}
-                                            {character.attributes.coldResistance !== undefined && (
-                                                <div className="attribute-item">
-                                                    <span className="attribute-icon">❄️</span>
-                                                    <span>Resistencia al frío: {character.attributes.coldResistance}</span>
+                                            {character.attributes.coldResistance !== undefined && character.attributes.coldResistance > 0 && (
+                                                <div className="details-attribute-badge">
+                                                    <span className="details-attr-icon">❄️</span>
+                                                    <span className="details-attr-text">Res. Frío: {character.attributes.coldResistance}</span>
                                                 </div>
                                             )}
-                                            {character.attributes.physicalResistance !== undefined && (
-                                                <div className="attribute-item">
-                                                    <span className="attribute-icon">🛡️</span>
-                                                    <span>Resistencia física: {character.attributes.physicalResistance}</span>
+                                            {character.attributes.physicalResistance !== undefined && character.attributes.physicalResistance > 0 && (
+                                                <div className="details-attribute-badge">
+                                                    <span className="details-attr-icon">🛡️</span>
+                                                    <span className="details-attr-text">Res. Física: {character.attributes.physicalResistance}</span>
                                                 </div>
                                             )}
                                             {character.attributes.paralysisImmunity && (
-                                                <div className="attribute-item">
-                                                    <span className="attribute-icon">⚡</span>
-                                                    <span>Inmunidad a parálisis</span>
+                                                <div className="details-attribute-badge">
+                                                    <span className="details-attr-icon">⚡</span>
+                                                    <span className="details-attr-text">Inmune a Parálisis</span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 )}
 
+                                {/* Skills */}
                                 {skills.length > 0 && (
-                                    <div className="details-section">
-                                        <h5>Habilidades</h5>
-                                        <div className="skills-list">
+                                    <div className="details-skills-section">
+                                        <div className="details-skills-label">Habilidades ({skills.length})</div>
+                                        <div className="details-skills-list">
                                             {skills.map((skill) => (
-                                                <div key={skill.id} className="skill-item">
-                                                    <div className="skill-name">{skill.name}</div>
-                                                    <div className="skill-description">{skill.description}</div>
+                                                <div key={skill.id} className="details-skill-item">
+                                                    <div className="details-skill-header">
+                                                        <span className="details-skill-name">{skill.name}</span>
+                                                        {skill.cooldown > 0 && (
+                                                            <span className="details-skill-cooldown">RE: {skill.cooldown}</span>
+                                                        )}
+                                                    </div>
+                                                    <p className="details-skill-description">{skill.description}</p>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                 )}
 
+                                {/* Active Effects */}
                                 {player.status.effects.length > 0 && (
-                                    <div className="details-section">
-                                        <h5>Efectos Activos</h5>
-                                        <div className="effects-list">
+                                    <div className="details-effects-section">
+                                        <div className="details-effects-label">Efectos Activos</div>
+                                        <div className="details-effects-list">
                                             {player.status.effects.map((effect, index) => {
                                                 const effectConfig = getEffectConfig(effect.type);
                                                 return (
-                                                    <span
-                                                        key={index}
-                                                        className={`effect-badge effect-${effect.type}`}
-                                                        title={effectConfig.description}
-                                                    >
-                                                        {effectConfig.icon} {effectConfig.name} ({effect.duration})
-                                                    </span>
+                                                    <div key={index} className="details-effect-badge">
+                                                        <span className="details-effect-icon">{effectConfig.icon}</span>
+                                                        <span className="details-effect-text">{effectConfig.name} ({effect.duration})</span>
+                                                    </div>
                                                 );
                                             })}
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="details-section">
-                                    <div className="player-info">
-                                        <span>Cartas en mano: {player.hand.length}</span>
+                                {/* Additional Info */}
+                                <div className="details-additional-info">
+                                    <div className="details-info-row">
+                                        <span className="details-info-label">Cartas en mano:</span>
+                                        <span className="details-info-value">{player.hand.length}</span>
                                     </div>
                                 </div>
                             </>

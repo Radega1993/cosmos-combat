@@ -595,6 +595,18 @@
   - [x] Información de turno más compacta
   - [x] Carrusel horizontal para cartas y habilidades
   - [x] Traducción completa al español (España)
+  - [x] **Mejoras de UI/UX de personajes (Enero 2025)**
+    - [x] Layout horizontal para cards de personajes (imagen + info al lado)
+    - [x] Información crítica visible directamente: HP, nombre, stats (ataque, defensa, velocidad)
+    - [x] Efectos activos mostrados con badges compactos
+    - [x] Panel de detalles mejorado con mejor legibilidad (colores más claros, menos blur)
+    - [x] Sistema de hover y click para fijar panel (pinned state)
+    - [x] Eliminación de overlays encima de la imagen (HP, "TU TURNO" ahora fuera)
+    - [x] Optimización para 6 jugadores: Grid de 3 columnas en pantallas grandes
+    - [x] Cards adaptativos que aprovechan mejor el ancho disponible
+    - [x] Diseño de cartas de selección estilo TCG/MTG con formato full-art
+    - [x] Modal de confirmación para selección de personajes
+    - [x] Visualización de habilidades en cartas de selección
 
 ### Modos de Partida
 - [x] **Modo Aleatorio** (predeterminado)

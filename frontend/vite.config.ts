@@ -17,6 +17,10 @@ export default defineConfig({
                 target: 'http://localhost:3001',
                 changeOrigin: true,
             },
+            '/deck_img': {
+                target: 'http://localhost:3001',
+                changeOrigin: true,
+            },
         },
     },
     publicDir: '../deck_img',

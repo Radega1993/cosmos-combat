@@ -363,24 +363,26 @@ function GamePage() {
                         </div>
                     </>
                 ) : (
-                    <div className="players-list">
-                        <h2>Jugadores</h2>
-                        {currentGame.players.map((player) => (
-                            <div key={player.playerId} className="player-card">
-                                <div className="player-info">
-                                    <span className="player-name">{player.playerName}</span>
-                                    {player.characterId && <span className="character-id">{player.characterId}</span>}
-                                    {player.isReady && <span className="ready-badge">Listo</span>}
-                                </div>
-                                {player.playerId === currentPlayerId && <span className="you-badge">Tú</span>}
+                    <div className="lobby-layout">
+                        {/* Sidebar for players list */}
+                        <div className="players-sidebar">
+                            <h3 className="sidebar-title">Jugadores</h3>
+                            <div className="players-list">
+                                {currentGame.players.map((player) => (
+                                    <div key={player.playerId} className="player-card">
+                                        <div className="player-info">
+                                            <span className="player-name">{player.playerName}</span>
+                                            {player.characterId && <span className="character-id">{player.characterId}</span>}
+                                            {player.isReady && <span className="ready-badge">✓ Listo</span>}
+                                        </div>
+                                        {player.playerId === currentPlayerId && <span className="you-badge">Tú</span>}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                )}
+                        </div>
 
-                <div className="game-actions">
-                    {currentGame.phase === 'lobby' && (
-                        <div className="lobby-phase">
+                        {/* Main content area for character selection */}
+                        <div className="lobby-main-content">
                             {currentGame.gameMode === 'select' && currentPlayer && !currentPlayer.characterId && (
                                 <div className="character-selection-section">
                                     <CharacterSelector
@@ -431,11 +433,16 @@ function GamePage() {
                                 </div>
                             )}
                         </div>
-                    )}
-                    {currentGame.phase === 'finished' && gameState && (
+                    </div>
+                )}
+
+                {currentGame.phase === 'finished' && gameState && (
+                    <div className="game-actions">
                         <GameFinished gameState={gameState} currentPlayerId={currentPlayerId} />
-                    )}
-                    {currentGame.phase === 'playing' && gameState && (
+                    </div>
+                )}
+                {currentGame.phase === 'playing' && gameState && (
+                    <div className="game-actions">
                         <div className="playing-phase">
                             <div className="actions-wrapper">
                                 {/* Action Buttons - Left side on desktop */}
@@ -485,8 +492,8 @@ function GamePage() {
                                 )}
                             </div>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     );
