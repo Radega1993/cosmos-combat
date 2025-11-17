@@ -495,6 +495,35 @@ function calculateDamage(attacker: Player, defender: Player, baseDamage: number)
 - **Personajes**: `deck_img/finales personajes/`
 - **Configuración**: `app.useStaticAssets()` en `main.ts`
 
+### Sistema de Presets
+
+#### Schema de Preset
+- **Nombre y descripción**: Identificación del preset
+- **Creador**: Asociado al usuario que lo creó
+- **Configuración**: Objeto completo con personajes, cartas, habilidades y balance
+- **Índices**: Búsqueda por nombre+usuario, activos, por defecto
+
+#### Endpoints de Presets
+- `POST /admin/presets` - Crear preset (requiere autenticación)
+- `GET /admin/presets` - Listar presets del usuario
+- `GET /admin/presets/:id` - Obtener preset específico
+- `POST /admin/presets/:id/load` - Cargar preset (restaura configuración)
+- `DELETE /admin/presets/:id` - Eliminar preset (soft delete)
+- `POST /admin/presets/compare` - Comparar dos presets
+
+#### Funcionalidades
+- **Guardar**: Captura estado actual completo del juego
+- **Cargar**: Restaura toda la configuración desde un preset
+- **Comparar**: Detecta diferencias entre dos presets por sección
+- **Gestión**: Listar, eliminar presets del usuario
+
+#### Frontend - PresetsSection
+- Lista de presets guardados
+- Modal para crear nuevo preset
+- Botones para cargar y eliminar
+- Modal para comparar presets con vista lado a lado
+- Confirmaciones antes de acciones destructivas
+
 ---
 
 ## Seguridad y Validación

@@ -6,6 +6,7 @@ import { Skill, SkillSchema } from '../database/schemas/skill.schema';
 import { Card, CardSchema } from '../database/schemas/card.schema';
 import { Character, CharacterSchema } from '../database/schemas/character.schema';
 import { GameBalance, GameBalanceSchema } from '../database/schemas/game-balance.schema';
+import { Preset, PresetSchema } from '../database/schemas/preset.schema';
 import { AuthModule } from '../auth/auth.module';
 import { CharactersModule } from '../characters/characters.module';
 import { CardsModule } from '../cards/cards.module';
@@ -18,6 +19,7 @@ import { SkillsModule } from '../skills/skills.module';
             { name: Card.name, schema: CardSchema },
             { name: Character.name, schema: CharacterSchema },
             { name: GameBalance.name, schema: GameBalanceSchema },
+            { name: Preset.name, schema: PresetSchema },
         ]),
         AuthModule,
         CharactersModule,

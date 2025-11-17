@@ -234,6 +234,41 @@ class ApiService {
             body: JSON.stringify(data),
         });
     }
+
+    // Presets
+    async createPreset(name: string, description?: string) {
+        return this.fetch<any>('/admin/presets', {
+            method: 'POST',
+            body: JSON.stringify({ name, description }),
+        });
+    }
+
+    async getPresets() {
+        return this.fetch<any[]>('/admin/presets');
+    }
+
+    async getPreset(id: string) {
+        return this.fetch<any>(`/admin/presets/${id}`);
+    }
+
+    async loadPreset(id: string) {
+        return this.fetch<any>(`/admin/presets/${id}/load`, {
+            method: 'POST',
+        });
+    }
+
+    async deletePreset(id: string) {
+        return this.fetch<any>(`/admin/presets/${id}`, {
+            method: 'DELETE',
+        });
+    }
+
+    async comparePresets(presetId1: string, presetId2: string) {
+        return this.fetch<any>('/admin/presets/compare', {
+            method: 'POST',
+            body: JSON.stringify({ presetId1, presetId2 }),
+        });
+    }
 }
 
 export const apiService = new ApiService();

@@ -59,7 +59,7 @@ interface Character {
     isActive: boolean;
 }
 
-type TabType = 'dashboard' | 'characters' | 'cards' | 'skills' | 'balance';
+type TabType = 'dashboard' | 'characters' | 'cards' | 'skills' | 'balance' | 'presets';
 
 function AdminPage() {
     const { logout } = useAuth();
@@ -219,6 +219,12 @@ function AdminPage() {
                 >
                     🎯 Balance
                 </button>
+                <button
+                    className={activeTab === 'presets' ? 'active' : ''}
+                    onClick={() => setActiveTab('presets')}
+                >
+                    💾 Presets
+                </button>
             </div>
 
             <div className="admin-content">
@@ -317,6 +323,15 @@ function AdminPage() {
                             <BalanceSection
                                 gameBalance={gameBalance}
                                 onSave={handleSaveBalance}
+                            />
+                        )}
+
+                        {activeTab === 'presets' && (
+                            <PresetsSection
+                                onLoad={() => {
+                                    loadTabData();
+                                    setActiveTab('dashboard');
+                                }}
                             />
                         )}
                     </>
@@ -1163,6 +1178,316 @@ function BalanceSection({
                 <button type="submit" className="save-button">Guardar Balance</button>
             </div>
         </form>
+    );
+}
+
+// Presets Section Component
+function PresetsSection({ onLoad }: { onLoad: () => void }) {
+    const [presets, setPresets] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showCompareModal, setShowCompareModal] = useState(false);
+    const [presetName, setPresetName] = useState('');
+    const [presetDescription, setPresetDescription] = useState('');
+    const [selectedPresets, setSelectedPresets] = useState<{ id1: string; id2: string }>({ id1: '', id2: '' });
+    const [comparison, setComparison] = useState<any>(null);
+
+    useEffect(() => {
+        loadPresets();
+    }, []);
+
+    const loadPresets = async () => {
+        setLoading(true);
+        try {
+            const data = await apiService.getPresets();
+            setPresets(data || []);
+        } catch (error: any) {
+            showMessage('error', error.message || 'Error al cargar presets');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const showMessage = (type: 'success' | 'error', text: string) => {
+        setMessage({ type, text });
+        setTimeout(() => setMessage(null), 3000);
+    };
+
+    const handleCreatePreset = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await apiService.createPreset(presetName, presetDescription || undefined);
+            showMessage('success', 'Preset creado correctamente');
+            setShowCreateModal(false);
+            setPresetName('');
+            setPresetDescription('');
+            loadPresets();
+        } catch (error: any) {
+            showMessage('error', error.message || 'Error al crear preset');
+        }
+    };
+
+    const handleLoadPreset = async (id: string) => {
+        if (!confirm('¿Estás seguro de que quieres cargar este preset? Esto sobrescribirá la configuración actual.')) {
+            return;
+        }
+        try {
+            await apiService.loadPreset(id);
+            showMessage('success', 'Preset cargado correctamente');
+            onLoad();
+        } catch (error: any) {
+            showMessage('error', error.message || 'Error al cargar preset');
+        }
+    };
+
+    const handleDeletePreset = async (id: string) => {
+        if (!confirm('¿Estás seguro de que quieres eliminar este preset?')) {
+            return;
+        }
+        try {
+            await apiService.deletePreset(id);
+            showMessage('success', 'Preset eliminado correctamente');
+            loadPresets();
+        } catch (error: any) {
+            showMessage('error', error.message || 'Error al eliminar preset');
+        }
+    };
+
+    const handleCompare = async () => {
+        if (!selectedPresets.id1 || !selectedPresets.id2) {
+            showMessage('error', 'Selecciona dos presets para comparar');
+            return;
+        }
+        try {
+            const result = await apiService.comparePresets(selectedPresets.id1, selectedPresets.id2);
+            setComparison(result);
+            setShowCompareModal(true);
+        } catch (error: any) {
+            showMessage('error', error.message || 'Error al comparar presets');
+        }
+    };
+
+    if (loading) {
+        return <div className="loading">Cargando presets...</div>;
+    }
+
+    return (
+        <div className="section-content">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2>Gestión de Presets</h2>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="save-button"
+                    >
+                        💾 Guardar Preset Actual
+                    </button>
+                    <button
+                        onClick={() => setShowCompareModal(true)}
+                        className="edit-button"
+                    >
+                        🔍 Comparar Presets
+                    </button>
+                </div>
+            </div>
+
+            {message && (
+                <div className={`admin-message ${message.type}`}>
+                    {message.text}
+                </div>
+            )}
+
+            {presets.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem', color: '#cbd5e1' }}>
+                    <p>No hay presets guardados. Crea uno para empezar.</p>
+                </div>
+            ) : (
+                <div className="items-grid">
+                    {presets.map((preset) => (
+                        <div key={preset._id} className="item-card">
+                            <div className="item-info">
+                                <h3>{preset.name}</h3>
+                                {preset.description && <p>{preset.description}</p>}
+                                <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                                    Creado: {new Date(preset.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <div className="item-actions">
+                                <button
+                                    onClick={() => handleLoadPreset(preset._id)}
+                                    className="edit-button"
+                                >
+                                    📥 Cargar
+                                </button>
+                                <button
+                                    onClick={() => handleDeletePreset(preset._id)}
+                                    className="cancel-button"
+                                >
+                                    🗑️ Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {showCreateModal && (
+                <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Crear Nuevo Preset</h2>
+                        <form onSubmit={handleCreatePreset}>
+                            <div className="form-group">
+                                <label>Nombre del Preset *</label>
+                                <input
+                                    type="text"
+                                    value={presetName}
+                                    onChange={(e) => setPresetName(e.target.value)}
+                                    required
+                                    placeholder="Ej: Balance v1.0"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Descripción (opcional)</label>
+                                <textarea
+                                    value={presetDescription}
+                                    onChange={(e) => setPresetDescription(e.target.value)}
+                                    rows={3}
+                                    placeholder="Descripción del preset..."
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <button type="submit" className="save-button">Guardar</button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowCreateModal(false);
+                                        setPresetName('');
+                                        setPresetDescription('');
+                                    }}
+                                    className="cancel-button"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {showCompareModal && (
+                <div className="modal-overlay" onClick={() => {
+                    setShowCompareModal(false);
+                    setComparison(null);
+                    setSelectedPresets({ id1: '', id2: '' });
+                }}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', maxHeight: '90vh', overflow: 'auto' }}>
+                        <h2>Comparar Presets</h2>
+                        {!comparison ? (
+                            <>
+                                <div className="form-group">
+                                    <label>Preset 1</label>
+                                    <select
+                                        value={selectedPresets.id1}
+                                        onChange={(e) => setSelectedPresets({ ...selectedPresets, id1: e.target.value })}
+                                    >
+                                        <option value="">Seleccionar preset...</option>
+                                        {presets.map((p) => (
+                                            <option key={p._id} value={p._id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Preset 2</label>
+                                    <select
+                                        value={selectedPresets.id2}
+                                        onChange={(e) => setSelectedPresets({ ...selectedPresets, id2: e.target.value })}
+                                    >
+                                        <option value="">Seleccionar preset...</option>
+                                        {presets.map((p) => (
+                                            <option key={p._id} value={p._id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-actions">
+                                    <button onClick={handleCompare} className="save-button">Comparar</button>
+                                    <button
+                                        onClick={() => {
+                                            setShowCompareModal(false);
+                                            setSelectedPresets({ id1: '', id2: '' });
+                                        }}
+                                        className="cancel-button"
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div>
+                                <h3>Comparación: {comparison.preset1.name} vs {comparison.preset2.name}</h3>
+                                <ComparisonView differences={comparison.differences} />
+                                <div className="form-actions" style={{ marginTop: '2rem' }}>
+                                    <button
+                                        onClick={() => {
+                                            setShowCompareModal(false);
+                                            setComparison(null);
+                                            setSelectedPresets({ id1: '', id2: '' });
+                                        }}
+                                        className="cancel-button"
+                                    >
+                                        Cerrar
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// Comparison View Component
+function ComparisonView({ differences }: { differences: any }) {
+    const renderDifferences = (section: string, diffs: any) => {
+        const keys = Object.keys(diffs);
+        if (keys.length === 0) {
+            return <p style={{ color: '#86efac' }}>✓ Sin diferencias</p>;
+        }
+
+        return (
+            <div style={{ marginTop: '1rem' }}>
+                <h4 style={{ color: '#a78bfa', marginBottom: '0.5rem' }}>{section}</h4>
+                {keys.map((key) => (
+                    <div key={key} style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(102, 126, 234, 0.1)', borderRadius: '8px' }}>
+                        <strong style={{ color: '#fca5a5' }}>{key}</strong>
+                        <div style={{ marginTop: '0.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div>
+                                <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Preset 1:</p>
+                                <pre style={{ background: 'rgba(0,0,0,0.3)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', overflow: 'auto' }}>
+                                    {JSON.stringify(diffs[key].preset1, null, 2)}
+                                </pre>
+                            </div>
+                            <div>
+                                <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Preset 2:</p>
+                                <pre style={{ background: 'rgba(0,0,0,0.3)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', overflow: 'auto' }}>
+                                    {JSON.stringify(diffs[key].preset2, null, 2)}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    return (
+        <div>
+            {renderDifferences('Personajes', differences.characters)}
+            {renderDifferences('Cartas', differences.cards)}
+            {renderDifferences('Habilidades', differences.skills)}
+            {renderDifferences('Balance', differences.balance)}
+        </div>
     );
 }
 

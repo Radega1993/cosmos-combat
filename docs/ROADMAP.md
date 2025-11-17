@@ -6,7 +6,7 @@
 |------|----------|--------------|-----------|--------|
 | **FASE 1** | 7 días | TBD | Diciembre 2024 | ✅ Completada |
 | **FASE 2** | 10 días | TBD | TBD | ⏳ Pendiente |
-| **FASE 3** | 3 días | Días 18-19 | Diciembre 2024 | ✅ Completada (Parcial) |
+| **FASE 3** | 3 días | Días 18-20 | Diciembre 2024 | ✅ Completada |
 | **FASE 4** | 5 días | TBD | TBD | ⏳ Pendiente |
 | **TOTAL** | **25 días** | | | |
 
@@ -109,12 +109,12 @@
 - [x] Ajuste de habilidades
 - [x] Ajuste de efectos (balance general)
 
-### Día 20: Sistema de Presets
-- [ ] Guardar configuraciones
-- [ ] Cargar presets
-- [ ] Comparar configuraciones
+### Día 20: Sistema de Presets ✅
+- [x] Guardar configuraciones
+- [x] Cargar presets
+- [x] Comparar configuraciones
 
-**Entregable**: Panel completo de balanceo
+**Entregable**: Panel completo de balanceo ✅
 
 ---
 

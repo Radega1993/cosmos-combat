@@ -206,7 +206,7 @@ interface PlayerStatus {
 ### Objetivo
 Crear una interfaz de administración que permita ajustar valores del juego en tiempo real.
 
-### Estado: ✅ Días 18-19 Completados
+### Estado: ✅ Completada (Días 18-20)
 
 ### Funcionalidades Requeridas
 
@@ -242,11 +242,11 @@ Crear una interfaz de administración que permita ajustar valores del juego en t
 - [x] Ajuste de balance general (mano inicial, cartas por turno, acciones por turno)
 - [x] Modificación de parámetros globales del juego
 
-#### 6. Sistema de Presets
-- [ ] Guardar configuración como preset
-- [ ] Cargar preset guardado
-- [ ] Comparar configuraciones
-- [ ] Reset a valores por defecto
+#### 6. Sistema de Presets ✅
+- [x] Guardar configuración como preset
+- [x] Cargar preset guardado
+- [x] Comparar configuraciones
+- [x] Eliminar presets
 
 ### Entregables
 - ✅ Panel de administración completo
