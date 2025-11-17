@@ -7,7 +7,7 @@ import { User, UserDocument, UserRole } from '../database/schemas/user.schema';
 
 export interface RegisterDto {
     username: string;
-    email: string;
+    email?: string;
     password: string;
 }
 
@@ -34,9 +34,15 @@ export class AuthService {
         const { username, email, password } = registerDto;
 
         // Check if user already exists
-        const existingUser = await this.userModel.findOne({
-            $or: [{ username: username.toLowerCase() }, { email: email.toLowerCase() }],
-        });
+        const query: any = { username: username.toLowerCase() };
+        if (email) {
+            query.$or = [
+                { username: username.toLowerCase() },
+                { email: email.toLowerCase() },
+            ];
+        }
+
+        const existingUser = await this.userModel.findOne(query);
 
         if (existingUser) {
             throw new ConflictException('Username or email already exists');
@@ -46,13 +52,18 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create user
-        const user = await this.userModel.create({
+        const userData: any = {
             username: username.toLowerCase(),
-            email: email.toLowerCase(),
             password: hashedPassword,
             role: UserRole.USER,
             isActive: true,
-        });
+        };
+
+        if (email) {
+            userData.email = email.toLowerCase();
+        }
+
+        const user = await this.userModel.create(userData);
 
         // Generate token
         // @ts-ignore - JWT sign returns string but TypeScript infers complex type

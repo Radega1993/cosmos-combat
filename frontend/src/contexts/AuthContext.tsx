@@ -15,7 +15,7 @@ interface AuthContextType {
     isAdmin: boolean;
     isLoading: boolean;
     login: (username: string, password: string) => Promise<void>;
-    register: (username: string, email: string, password: string) => Promise<void>;
+    register: (username: string, email: string | undefined, password: string) => Promise<void>;
     logout: () => void;
     refreshUser: () => Promise<void>;
 }
@@ -71,8 +71,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         apiService.setAuthToken(authToken);
     };
 
-    const register = async (username: string, email: string, password: string) => {
-        const response = await apiService.register(username, email, password);
+    const register = async (username: string, email: string | undefined, password: string) => {
+        const response = await apiService.register(username, email || '', password);
         const { user: userData, token: authToken } = response;
 
         setUser(userData);

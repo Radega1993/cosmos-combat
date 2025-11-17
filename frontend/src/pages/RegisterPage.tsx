@@ -30,7 +30,7 @@ function RegisterPage() {
         setIsLoading(true);
 
         try {
-            await register(username, email, password);
+            await register(username, email || undefined, password);
             navigate('/');
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');
@@ -61,13 +61,12 @@ function RegisterPage() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">Email (opcional)</label>
                         <input
                             id="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required
                             autoComplete="email"
                         />
                     </div>

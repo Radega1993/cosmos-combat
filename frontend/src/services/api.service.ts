@@ -147,9 +147,13 @@ class ApiService {
     }
 
     async register(username: string, email: string, password: string) {
+        const body: any = { username, password };
+        if (email && email.trim()) {
+            body.email = email;
+        }
         return this.fetch<{ user: any; token: string }>('/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ username, email, password }),
+            body: JSON.stringify(body),
         });
     }
 
