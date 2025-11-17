@@ -312,7 +312,23 @@
 - ✅ Protección de rutas
 
 ### Problemas Conocidos
-- Ninguno conocido. Todos los sistemas están funcionando correctamente.
+
+#### 🐛 Issue #1: Imágenes de personajes no visibles
+**Estado**: Pendiente de resolución  
+**Descripción**: Las imágenes de los personajes no se cargan correctamente al inicio de la partida. Los personajes aparecen como rectángulos oscuros en lugar de mostrar sus imágenes.
+
+**Detalles técnicos**:
+- Las imágenes están en `/deck_img/personajes/` con nombres: `strike.png`, `blaze.png`, `shadow.png`, `thunder.png`, `frost.png`, `ironclad.png`
+- El backend sirve archivos estáticos desde `/deck_img` correctamente
+- El componente `PlayerStatus` intenta cargar imágenes usando `character.image` o fallback a `/deck_img/personajes/${characterId}.png`
+- El problema puede estar relacionado con:
+  - Timing de carga de datos del personaje
+  - Rutas de imágenes incorrectas
+  - Problemas de CORS o permisos de archivos estáticos
+
+**Workaround temporal**: Recargar la página o hacer hover sobre el personaje para forzar la carga.
+
+**Prioridad**: Alta - Afecta la experiencia visual del juego
 
 ---
 
@@ -569,6 +585,16 @@
   - Grids adaptativos
   - Optimizado para móvil (donde se jugará más)
 - [x] Estilo adulto pero apto (sin sangre)
+- [x] **Optimizaciones UI/UX recientes (Diciembre 2024)**
+  - [x] Layout optimizado sin scroll vertical
+  - [x] Grid de 2 columnas en desktop: Acciones y Habilidades lado a lado
+  - [x] Panel de detalles de personaje con hover/click mejorado
+  - [x] Panel centrado con overlay oscuro (móvil y desktop)
+  - [x] Espaciado optimizado para aprovechar mejor el espacio
+  - [x] Personajes más compactos (90x120px)
+  - [x] Información de turno más compacta
+  - [x] Carrusel horizontal para cartas y habilidades
+  - [x] Traducción completa al español (España)
 
 ### Modos de Partida
 - [x] **Modo Aleatorio** (predeterminado)

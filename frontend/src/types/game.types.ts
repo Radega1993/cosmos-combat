@@ -45,6 +45,7 @@ export interface Character {
     };
     skills: string[];
     deck: string[];
+    image?: string;
     isActive: boolean;
 }
 

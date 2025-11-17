@@ -1,33 +1,48 @@
 .game-actions {
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 12px;
+  padding: 0.5rem 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+@media (min-width: 769px) {
+  .game-actions {
+    padding: 0.4rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 6px;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
 }
 
 .waiting-message {
-  padding: 2rem;
+  padding: 1.5rem;
   text-align: center;
-  color: rgba(255, 255, 255, 0.7);
-  font-style: italic;
-  font-size: 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
+  font-weight: 500;
 }
 
 .target-selection {
   padding: 1rem;
-  background: rgba(255, 215, 0, 0.15);
-  border: 2px solid rgba(255, 215, 0, 0.5);
-  border-radius: 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
   margin-bottom: 1rem;
   text-align: center;
 }
 
 .target-selection p {
-  margin: 0 0 0.5rem 0;
-  color: rgba(255, 255, 255, 0.95);
+  margin: 0 0 0.75rem 0;
+  color: #ffd700;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .cancel-button {
@@ -37,8 +52,8 @@
   border-radius: 8px;
   color: #fca5a5;
   cursor: pointer;
-  font-weight: 600;
   transition: all 0.3s ease;
+  font-weight: 600;
   font-size: 0.9rem;
 }
 
@@ -46,60 +61,64 @@
   background: rgba(239, 68, 68, 0.3);
   border-color: rgba(239, 68, 68, 0.6);
   transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }
 
 .actions-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .actions-header h3 {
   margin: 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
   color: #a78bfa;
-  font-size: clamp(1.1rem, 2.5vw, 1.2rem);
   font-weight: 600;
 }
 
 .actions-remaining {
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   background: rgba(102, 126, 234, 0.2);
   border: 1px solid rgba(102, 126, 234, 0.4);
   border-radius: 8px;
+  font-size: clamp(0.9rem, 2vw, 1rem);
   color: #818cf8;
-  font-weight: 700;
-  font-size: clamp(0.85rem, 2vw, 0.9rem);
+  font-weight: 600;
 }
 
 .action-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .action-button {
   flex: 1;
-  min-width: 150px;
-  padding: 1rem 2rem;
-  border: 2px solid rgba(102, 126, 234, 0.3);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  font-size: clamp(0.95rem, 2vw, 1rem);
-  font-weight: 600;
+  min-width: 120px;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+  border: 2px solid rgba(102, 126, 234, 0.5);
+  border-radius: 8px;
+  color: #818cf8;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .action-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(102, 126, 234, 0.5);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(168, 85, 247, 0.4) 100%);
+  border-color: rgba(102, 126, 234, 0.8);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.action-button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .action-button:disabled {
@@ -108,34 +127,31 @@
 }
 
 .attack-button {
-  border-color: rgba(239, 68, 68, 0.4);
-  background: rgba(239, 68, 68, 0.1);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
 }
 
 .attack-button:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.6);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.4) 0%, rgba(220, 38, 38, 0.4) 100%);
+  border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
 .end-turn-button {
-  border-color: rgba(74, 222, 128, 0.4);
-  background: rgba(74, 222, 128, 0.1);
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%);
+  border-color: rgba(74, 222, 128, 0.5);
   color: #4ade80;
 }
 
 .end-turn-button:hover:not(:disabled) {
-  background: rgba(74, 222, 128, 0.2);
-  border-color: rgba(74, 222, 128, 0.6);
-  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.4) 0%, rgba(34, 197, 94, 0.4) 100%);
+  border-color: rgba(74, 222, 128, 0.8);
+  box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .game-actions {
-    padding: 1rem;
-  }
-
   .action-buttons {
     flex-direction: column;
   }
@@ -147,17 +163,13 @@
 }
 
 @media (max-width: 480px) {
-  .game-actions {
-    padding: 0.75rem;
-  }
-
   .actions-header {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .action-button {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9rem;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.95rem;
   }
 }

@@ -12,15 +12,15 @@ function SkillsList({ skills, cooldowns, onSkillClick, disabled }: SkillsListPro
     if (skills.length === 0) {
         return (
             <div className="skills-list-container">
-                <h3>Skills</h3>
-                <div className="skills-empty">No skills available</div>
+                <h3>Habilidades</h3>
+                <div className="skills-empty">No hay habilidades disponibles</div>
             </div>
         );
     }
 
     return (
         <div className="skills-list-container">
-            <h3>Skills ({skills.length})</h3>
+            <h3>Habilidades ({skills.length})</h3>
             <div className="skills-grid">
                 {skills.map((skill) => {
                     const cooldownRemaining = cooldowns[skill.id] || 0;
@@ -37,20 +37,20 @@ function SkillsList({ skills, cooldowns, onSkillClick, disabled }: SkillsListPro
                                 <h4>{skill.name}</h4>
                                 {isOnCooldown && (
                                     <span className="cooldown-badge">
-                                        CD: {cooldownRemaining}
+                                        RE: {cooldownRemaining}
                                     </span>
                                 )}
                             </div>
                             <p className="skill-description">{skill.description}</p>
                             <div className="skill-stats">
-                                {skill.damage && <span className="stat-damage">DMG: {skill.damage}</span>}
-                                {skill.heal && <span className="stat-heal">HEAL: {skill.heal}</span>}
-                                {skill.shield && <span className="stat-shield">SHIELD: {skill.shield}</span>}
+                                {skill.damage && <span className="stat-damage">DAÑO: {skill.damage}</span>}
+                                {skill.heal && <span className="stat-heal">CURA: {skill.heal}</span>}
+                                {skill.shield && <span className="stat-shield">ESCUDO: {skill.shield}</span>}
                                 {skill.cooldown > 0 && (
-                                    <span className="stat-cooldown">Cooldown: {skill.cooldown}</span>
+                                    <span className="stat-cooldown">Reutilización: {skill.cooldown}</span>
                                 )}
                                 {skill.cost !== undefined && skill.cost > 0 && (
-                                    <span className="stat-cost">COST: {skill.cost}</span>
+                                    <span className="stat-cost">COSTE: {skill.cost}</span>
                                 )}
                             </div>
                             {skill.effects && skill.effects.length > 0 && (
@@ -63,7 +63,7 @@ function SkillsList({ skills, cooldowns, onSkillClick, disabled }: SkillsListPro
                                 </div>
                             )}
                             <div className="skill-target">
-                                Target: {skill.targetType === 'all' ? 'All Enemies' : skill.targetType === 'area' ? 'Area' : skill.targetType === 'self' ? 'Self' : 'Single'}
+                                Objetivo: {skill.targetType === 'all' ? 'Todos los enemigos' : skill.targetType === 'area' ? 'Área' : skill.targetType === 'self' ? 'Sí mismo' : 'Único'}
                                 {(skill.targetType === 'all' || skill.targetType === 'area') && (
                                     <span className="area-badge">ÁREA</span>
                                 )}

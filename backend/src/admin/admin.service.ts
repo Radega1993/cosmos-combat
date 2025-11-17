@@ -49,11 +49,11 @@ export class AdminService {
             const projectRoot = process.cwd().endsWith('backend')
                 ? join(process.cwd(), '..')
                 : process.cwd();
-            const imagesPath = join(projectRoot, 'deck_img', 'finales personajes');
+            const imagesPath = join(projectRoot, 'deck_img', 'personajes');
             const files = await readdir(imagesPath);
             return files
                 .filter((file) => file.endsWith('.png') || file.endsWith('.jpg'))
-                .map((file) => `/deck_img/finales personajes/${encodeURIComponent(file)}`);
+                .map((file) => `/deck_img/personajes/${encodeURIComponent(file)}`);
         } catch (error) {
             console.error('Error reading character images:', error);
             return [];

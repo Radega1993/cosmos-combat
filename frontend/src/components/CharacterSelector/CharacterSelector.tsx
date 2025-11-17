@@ -47,14 +47,14 @@ function CharacterSelector({ gameId, playerId }: CharacterSelectorProps) {
     };
 
     if (loading) {
-        return <div className="character-selector-loading">Loading characters...</div>;
+        return <div className="character-selector-loading">Cargando personajes...</div>;
     }
 
     const selectedCharacters = getSelectedCharacters();
 
     return (
         <div className="character-selector">
-            <h3>Select Your Character</h3>
+            <h3>Selecciona Tu Personaje</h3>
             <div className="characters-grid">
                 {characters.map((character) => {
                     const isSelected = selectedCharacterId === character.id;
@@ -69,10 +69,10 @@ function CharacterSelector({ gameId, playerId }: CharacterSelectorProps) {
                         >
                             <div className="character-image">
                                 <img
-                                    src={`/finales personajes/${character.id}_ok.png`}
+                                    src={character.image || `/deck_img/personajes/${character.id}.png`}
                                     alt={character.name}
                                     onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/finales personajes/back personajes.png';
+                                        (e.target as HTMLImageElement).src = '/deck_img/personajes/back personajes.png';
                                     }}
                                 />
                             </div>
@@ -87,10 +87,10 @@ function CharacterSelector({ gameId, playerId }: CharacterSelectorProps) {
                                 </div>
                                 {isSelected && (
                                     <div className="selection-badge">
-                                        {isMySelection ? 'Your Character' : 'Selected'}
+                                        {isMySelection ? 'Tu Personaje' : 'Seleccionado'}
                                     </div>
                                 )}
-                                {isTaken && <div className="taken-badge">Taken</div>}
+                                {isTaken && <div className="taken-badge">Ocupado</div>}
                             </div>
                         </div>
                     );

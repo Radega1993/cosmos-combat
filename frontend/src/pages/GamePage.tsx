@@ -7,7 +7,6 @@ import { useGameStore } from '../store/game.store';
 import CharacterSelector from '../components/CharacterSelector/CharacterSelector';
 import Hand from '../components/Hand/Hand';
 import SkillsList from '../components/SkillsList/SkillsList';
-import TurnIndicator from '../components/TurnIndicator/TurnIndicator';
 import PlayerStatus from '../components/PlayerStatus/PlayerStatus';
 import GameActions from '../components/GameActions/GameActions';
 import GameFinished from '../components/GameFinished/GameFinished';
@@ -176,15 +175,14 @@ function GamePage() {
                 setHand([]);
                 return;
             }
-            // Only load cards if the count matches to avoid stale data
+            // Load cards including inactive ones (players may have inactive cards in hand)
             const cards = await apiService.getCardsByIds(cardIds);
-            // Verify we got the right number of cards
-            if (cards.length === cardIds.length) {
-                setHand(cards);
-            } else {
-                console.warn(`Card count mismatch: expected ${cardIds.length}, got ${cards.length}`);
-                setHand(cards); // Still set it, but log the warning
+            // Always set the cards we got, even if count doesn't match
+            // This prevents the warning from appearing when cards are filtered server-side
+            if (cards.length !== cardIds.length) {
+                console.warn(`Card count mismatch: expected ${cardIds.length}, got ${cards.length}. Some cards may be inactive.`);
             }
+            setHand(cards);
         } catch (error) {
             console.error('Error loading cards:', error);
             setHand([]);
@@ -289,7 +287,7 @@ function GamePage() {
     if (!currentGame) {
         return (
             <div className="game-page">
-                <div className="loading">Loading game...</div>
+                <div className="loading">Cargando partida...</div>
             </div>
         );
     }
@@ -302,58 +300,79 @@ function GamePage() {
             <div className="game-header">
                 <h1>Cosmos Combat</h1>
                 <div className="game-info">
-                    <span>Game ID: {currentGame.gameId}</span>
-                    <span>Phase: {currentGame.phase}</span>
-                    <span>Players: {currentGame.players.length}/{currentGame.maxPlayers}</span>
+                    <span>ID de Partida: {currentGame.gameId}</span>
+                    <span>Fase: {currentGame.phase === 'lobby' ? 'Lobby' : currentGame.phase === 'playing' ? 'Jugando' : 'Finalizada'}</span>
+                    <span>Jugadores: {currentGame.players.length}/{currentGame.maxPlayers}</span>
                 </div>
                 <button onClick={handleLeaveGame} className="leave-button">
-                    Leave Game
+                    Abandonar Partida
                 </button>
             </div>
 
             <div className="game-content">
                 {currentGame.phase === 'playing' && gameState ? (
                     <>
-                        <div className="game-board">
-                            <TurnIndicator gameState={gameState} currentPlayerId={currentPlayerId} />
+                        {/* Players Section - Below Navbar */}
+                        <div className="players-status">
+                            {gameState.players.map((player) => (
+                                <PlayerStatus
+                                    key={player.playerId}
+                                    player={player}
+                                    isCurrentPlayer={player.playerId === gameState.currentPlayerId}
+                                    isMyPlayer={player.playerId === currentPlayerId}
+                                    onSelectTarget={handleTargetSelect}
+                                    selectingTarget={selectingTarget ? true : false}
+                                />
+                            ))}
+                        </div>
 
-                            <div className="shared-deck-info">
-                                <div className="shared-deck-stat">
-                                    <span className="stat-label">Shared Deck:</span>
+                        {/* Turn Information Section */}
+                        <div className="turn-info-section">
+                            <div className="turn-info-header">
+                                <h2>Turno {gameState.currentTurn || 1}</h2>
+                                {(() => {
+                                    const currentPlayer = gameState.players.find((p) => p.playerId === gameState.currentPlayerId);
+                                    return (
+                                        <div className="current-player-info">
+                                            <span className="player-name-turn">
+                                                {currentPlayer?.playerName || 'Desconocido'}
+                                                {currentPlayer?.playerId === currentPlayerId && <span className="you-badge-turn">(Tú)</span>}
+                                            </span>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                            <div className="turn-info-stats">
+                                <div className="turn-stat">
+                                    <span className="stat-label">Acciones:</span>
+                                    <span className="stat-value">{gameState.actionsRemaining || 0} / {gameState.turnState?.actionsPerTurn || 2}</span>
+                                </div>
+                                <div className="turn-stat">
+                                    <span className="stat-label">Fase:</span>
+                                    <span className="stat-value">{gameState.turnState?.phase === 'start' ? 'Inicio' : gameState.turnState?.phase === 'end' ? 'Final' : 'Principal'}</span>
+                                </div>
+                                <div className="turn-stat">
+                                    <span className="stat-label">Mazo:</span>
                                     <span className="stat-value">{gameState.sharedDeck?.length || 0}</span>
                                 </div>
-                                <div className="shared-deck-stat">
-                                    <span className="stat-label">Shared Discard:</span>
+                                <div className="turn-stat">
+                                    <span className="stat-label">Descarte:</span>
                                     <span className="stat-value">{gameState.sharedDiscard?.length || 0}</span>
                                 </div>
-                            </div>
-
-                            <div className="players-status">
-                                <h2>Players</h2>
-                                {gameState.players.map((player) => (
-                                    <PlayerStatus
-                                        key={player.playerId}
-                                        player={player}
-                                        isCurrentPlayer={player.playerId === gameState.currentPlayerId}
-                                        isMyPlayer={player.playerId === currentPlayerId}
-                                        onSelectTarget={handleTargetSelect}
-                                        selectingTarget={selectingTarget ? true : false}
-                                    />
-                                ))}
                             </div>
                         </div>
                     </>
                 ) : (
                     <div className="players-list">
-                        <h2>Players</h2>
+                        <h2>Jugadores</h2>
                         {currentGame.players.map((player) => (
                             <div key={player.playerId} className="player-card">
                                 <div className="player-info">
                                     <span className="player-name">{player.playerName}</span>
                                     {player.characterId && <span className="character-id">{player.characterId}</span>}
-                                    {player.isReady && <span className="ready-badge">Ready</span>}
+                                    {player.isReady && <span className="ready-badge">Listo</span>}
                                 </div>
-                                {player.playerId === currentPlayerId && <span className="you-badge">You</span>}
+                                {player.playerId === currentPlayerId && <span className="you-badge">Tú</span>}
                             </div>
                         ))}
                     </div>
@@ -372,7 +391,7 @@ function GamePage() {
                             )}
                             {currentGame.gameMode === 'select' && currentPlayer && currentPlayer.characterId && (
                                 <div className="ready-section">
-                                    <p>Character selected: {currentPlayer.characterId}</p>
+                                    <p>Personaje seleccionado: {currentPlayer.characterId}</p>
                                     <button
                                         onClick={() =>
                                             socketService.setReady(
@@ -383,13 +402,13 @@ function GamePage() {
                                         }
                                         className={`ready-button ${currentPlayer.isReady ? 'ready' : ''}`}
                                     >
-                                        {currentPlayer.isReady ? '✓ Ready' : 'Mark as Ready'}
+                                        {currentPlayer.isReady ? '✓ Listo' : 'Marcar como Listo'}
                                     </button>
                                 </div>
                             )}
                             {currentGame.gameMode === 'random' && currentPlayer && (
                                 <div className="ready-section">
-                                    <p>🎲 Random character mode - Characters will be assigned automatically when the game starts</p>
+                                    <p>🎲 Modo personaje aleatorio - Los personajes se asignarán automáticamente cuando comience la partida</p>
                                     <button
                                         onClick={() =>
                                             socketService.setReady(
@@ -400,14 +419,14 @@ function GamePage() {
                                         }
                                         className={`ready-button ${currentPlayer.isReady ? 'ready' : ''}`}
                                     >
-                                        {currentPlayer.isReady ? '✓ Ready' : 'Mark as Ready'}
+                                        {currentPlayer.isReady ? '✓ Listo' : 'Marcar como Listo'}
                                     </button>
                                 </div>
                             )}
                             {canStartGame() && currentPlayer && currentPlayer.playerId === currentGame.players[0]?.playerId && (
                                 <div className="start-game-section">
                                     <button onClick={handleStartGame} className="start-game-button">
-                                        Start Game
+                                        Iniciar Partida
                                     </button>
                                 </div>
                             )}
@@ -418,44 +437,53 @@ function GamePage() {
                     )}
                     {currentGame.phase === 'playing' && gameState && (
                         <div className="playing-phase">
-                            <GameActions
-                                gameState={gameState}
-                                currentPlayerId={currentPlayerId}
-                                onEndTurn={handleEndTurn}
-                                onAttack={handleAttack}
-                                onPlayCard={handlePlayCard}
-                                selectingTarget={selectingTarget}
-                                setSelectingTarget={setSelectingTarget}
-                                onTargetSelect={handleTargetSelect}
-                            />
-
-                            {hand.length > 0 && (
-                                <Hand
-                                    cards={hand}
-                                    onCardClick={(card) => {
-                                        if (gameState.currentPlayerId === currentPlayerId && (gameState.actionsRemaining || 0) > 0) {
-                                            handlePlayCard(card.id);
-                                        }
-                                    }}
+                            <div className="actions-wrapper">
+                                {/* Action Buttons - Left side on desktop */}
+                                <GameActions
+                                    gameState={gameState}
+                                    currentPlayerId={currentPlayerId}
+                                    onEndTurn={handleEndTurn}
+                                    onAttack={handleAttack}
+                                    onPlayCard={handlePlayCard}
+                                    selectingTarget={selectingTarget}
+                                    setSelectingTarget={setSelectingTarget}
+                                    onTargetSelect={handleTargetSelect}
                                 />
-                            )}
+                            </div>
 
-                            {gameState && currentPlayerId && (() => {
-                                const currentPlayer = gameState.players.find((p) => p.playerId === currentPlayerId);
-                                const playerCooldowns = currentPlayer?.status.cooldowns || {};
-                                return skills.length > 0 && (
-                                    <SkillsList
-                                        skills={skills}
-                                        cooldowns={playerCooldowns}
-                                        onSkillClick={(skill) => {
+                            <div className="skills-wrapper">
+                                {/* Skills List - Right side on desktop, below actions on mobile */}
+                                {gameState && currentPlayerId && (() => {
+                                    const currentPlayer = gameState.players.find((p) => p.playerId === currentPlayerId);
+                                    const playerCooldowns = currentPlayer?.status.cooldowns || {};
+                                    return skills.length > 0 && (
+                                        <SkillsList
+                                            skills={skills}
+                                            cooldowns={playerCooldowns}
+                                            onSkillClick={(skill) => {
+                                                if (gameState.currentPlayerId === currentPlayerId && (gameState.actionsRemaining || 0) > 0) {
+                                                    handleUseSkill(skill);
+                                                }
+                                            }}
+                                            disabled={gameState.currentPlayerId !== currentPlayerId || (gameState.actionsRemaining || 0) <= 0}
+                                        />
+                                    );
+                                })()}
+                            </div>
+
+                            <div className="hand-wrapper">
+                                {/* Hand Cards - Carousel - Full width below */}
+                                {hand.length > 0 && (
+                                    <Hand
+                                        cards={hand}
+                                        onCardClick={(card) => {
                                             if (gameState.currentPlayerId === currentPlayerId && (gameState.actionsRemaining || 0) > 0) {
-                                                handleUseSkill(skill);
+                                                handlePlayCard(card.id);
                                             }
                                         }}
-                                        disabled={gameState.currentPlayerId !== currentPlayerId || (gameState.actionsRemaining || 0) <= 0}
                                     />
-                                );
-                            })()}
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

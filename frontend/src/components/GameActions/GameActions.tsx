@@ -30,7 +30,7 @@ function GameActions({
         return (
             <div className="game-actions">
                 <div className="waiting-message">
-                    Waiting for {gameState.players.find((p) => p.playerId === gameState.currentPlayerId)?.playerName || 'opponent'}...
+                    Esperando a {gameState.players.find((p) => p.playerId === gameState.currentPlayerId)?.playerName || 'oponente'}...
                 </div>
             </div>
         );
@@ -45,16 +45,16 @@ function GameActions({
         <div className="game-actions">
             {selectingTarget && (
                 <div className="target-selection">
-                    <p>Select a target:</p>
+                    <p>Selecciona un objetivo:</p>
                     <button onClick={() => setSelectingTarget(null)} className="cancel-button">
-                        Cancel
+                        Cancelar
                     </button>
                 </div>
             )}
 
             <div className="actions-header">
-                <h3>Your Actions</h3>
-                <span className="actions-remaining">Actions: {actionsRemaining}</span>
+                <h3>Tus Acciones</h3>
+                <span className="actions-remaining">Acciones: {actionsRemaining}</span>
             </div>
 
             <div className="action-buttons">
@@ -63,13 +63,13 @@ function GameActions({
                     disabled={!canAct}
                     className="action-button attack-button"
                 >
-                    ⚔️ Basic Attack
+                    ⚔️ Ataque Básico
                 </button>
                 <button
                     onClick={onEndTurn}
                     className="action-button end-turn-button"
                 >
-                    ✓ End Turn
+                    ✓ Finalizar Turno
                 </button>
             </div>
         </div>

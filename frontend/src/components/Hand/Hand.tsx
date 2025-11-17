@@ -10,15 +10,15 @@ function Hand({ cards, onCardClick }: HandProps) {
     if (cards.length === 0) {
         return (
             <div className="hand-container">
-                <h3>Your Hand</h3>
-                <div className="hand-empty">No cards in hand</div>
+                <h3>Tu Mano</h3>
+                <div className="hand-empty">No hay cartas en la mano</div>
             </div>
         );
     }
 
     return (
         <div className="hand-container">
-            <h3>Your Hand ({cards.length})</h3>
+            <h3>Tu Mano ({cards.length})</h3>
             <div className="hand-cards">
                 {cards.map((card, index) => (
                     <div

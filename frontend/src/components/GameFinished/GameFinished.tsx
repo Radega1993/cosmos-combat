@@ -13,48 +13,48 @@ function GameFinished({ gameState, currentPlayerId }: GameFinishedProps) {
     return (
         <div className="game-finished">
             <div className="finished-content">
-                <h2 className="finished-title">Game Finished!</h2>
+                <h2 className="finished-title">¡Partida Finalizada!</h2>
 
                 {winner ? (
                     <>
                         <div className={`winner-announcement ${isWinner ? 'you-won' : 'you-lost'}`}>
                             {isWinner ? (
                                 <>
-                                    <h3>🎉 You Won! 🎉</h3>
-                                    <p>Congratulations! You are the last player standing!</p>
+                                    <h3>🎉 ¡Has Ganado! 🎉</h3>
+                                    <p>¡Enhorabuena! ¡Eres el último jugador en pie!</p>
                                 </>
                             ) : (
                                 <>
-                                    <h3>🏆 {winner.playerName} Won!</h3>
-                                    <p>Better luck next time!</p>
+                                    <h3>🏆 ¡{winner.playerName} Ha Ganado!</h3>
+                                    <p>¡Mejor suerte la próxima vez!</p>
                                 </>
                             )}
                         </div>
 
                         <div className="final-stats">
-                            <h4>Final Statistics</h4>
+                            <h4>Estadísticas Finales</h4>
                             <div className="stats-grid">
                                 <div className="stat-item">
-                                    <span className="stat-label">Total Turns:</span>
+                                    <span className="stat-label">Turnos Totales:</span>
                                     <span className="stat-value">{gameState.currentTurn || 0}</span>
                                 </div>
                                 <div className="stat-item">
-                                    <span className="stat-label">Duration:</span>
+                                    <span className="stat-label">Duración:</span>
                                     <span className="stat-value">
                                         {gameState.gameStats?.duration !== undefined
                                             ? `${Math.floor(gameState.gameStats.duration / 60)}m ${gameState.gameStats.duration % 60}s`
-                                            : 'N/A'}
+                                            : 'N/D'}
                                     </span>
                                 </div>
                                 <div className="stat-item">
-                                    <span className="stat-label">Total Actions:</span>
+                                    <span className="stat-label">Acciones Totales:</span>
                                     <span className="stat-value">{gameState.gameStats?.totalActions || 0}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="final-standings">
-                            <h4>Final Standings</h4>
+                            <h4>Clasificación Final</h4>
                             <div className="standings-list">
                                 {gameState.players
                                     .sort((a, b) => b.hp - a.hp)
@@ -65,8 +65,8 @@ function GameFinished({ gameState, currentPlayerId }: GameFinishedProps) {
                                         >
                                             <span className="position">#{index + 1}</span>
                                             <span className="player-name">{player.playerName}</span>
-                                            <span className="final-hp">{player.hp} / {player.maxHp} HP</span>
-                                            {player.hp > 0 && <span className="winner-badge">🏆 Winner</span>}
+                                            <span className="final-hp">{player.hp} / {player.maxHp} PV</span>
+                                            {player.hp > 0 && <span className="winner-badge">🏆 Ganador</span>}
                                         </div>
                                     ))}
                             </div>
@@ -74,13 +74,13 @@ function GameFinished({ gameState, currentPlayerId }: GameFinishedProps) {
                     </>
                 ) : (
                     <div className="draw-announcement">
-                        <h3>Draw Game</h3>
-                        <p>No winner - all players were eliminated!</p>
+                        <h3>Empate</h3>
+                        <p>Sin ganador - ¡todos los jugadores fueron eliminados!</p>
                     </div>
                 )}
 
                 <div className="game-saved-notice">
-                    <p>✅ Game results have been saved to the database for analytics</p>
+                    <p>✅ Los resultados de la partida se han guardado en la base de datos para análisis</p>
                 </div>
             </div>
         </div>
