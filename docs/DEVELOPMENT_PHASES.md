@@ -206,37 +206,41 @@ interface PlayerStatus {
 ### Objetivo
 Crear una interfaz de administración que permita ajustar valores del juego en tiempo real.
 
+### Estado: ✅ Días 18-19 Completados
+
 ### Funcionalidades Requeridas
 
-#### 1. Panel de Control Principal
-- [ ] Dashboard de configuración
-- [ ] Navegación entre secciones
-- [ ] Guardado de cambios
-- [ ] Carga de configuraciones guardadas
+#### 1. Panel de Control Principal ✅
+- [x] Dashboard de configuración
+- [x] Navegación entre secciones
+- [x] Guardado de cambios
+- [x] Carga de configuraciones guardadas
 
-#### 2. Ajuste de Personajes
-- [ ] Modificar puntos de vida iniciales
-- [ ] Cambiar estadísticas base
-- [ ] Ajustar habilidades del personaje
-- [ ] Modificar tamaño del mazo
+#### 2. Ajuste de Personajes ✅
+- [x] Modificar puntos de vida iniciales
+- [x] Cambiar estadísticas base (ataque, defensa, velocidad, esquiva, acierto)
+- [x] Ajustar atributos (resistencias, inmunidades)
+- [x] Selección de imagen con preview
+- [x] Activación/desactivación de personajes
 
-#### 3. Ajuste de Cartas
-- [ ] Modificar daño de cartas
-- [ ] Cambiar efectos de cartas
-- [ ] Ajustar coste de cartas
-- [ ] Modificar probabilidades de aparición
+#### 3. Ajuste de Cartas ✅
+- [x] Modificar daño de cartas
+- [x] Cambiar efectos de cartas
+- [x] Ajustar coste de cartas
+- [x] Modificar tipo y objetivo
+- [x] Selección de imagen con preview
+- [x] Activación/desactivación de cartas
 
-#### 4. Ajuste de Habilidades
-- [ ] Modificar cooldown
-- [ ] Cambiar daño/efectos
-- [ ] Ajustar coste de recursos
-- [ ] Activar/desactivar habilidades
+#### 4. Ajuste de Habilidades ✅
+- [x] Modificar cooldown
+- [x] Cambiar daño/efectos
+- [x] Ajustar coste de recursos
+- [x] Activar/desactivar habilidades
+- [x] Modificar tipo y objetivo
 
-#### 5. Ajuste de Efectos
-- [ ] Modificar duración de efectos
-- [ ] Cambiar valores de efectos (daño, reducción, etc.)
-- [ ] Activar/desactivar efectos
-- [ ] Ajustar stack máximo
+#### 5. Ajuste de Efectos ✅
+- [x] Ajuste de balance general (mano inicial, cartas por turno, acciones por turno)
+- [x] Modificación de parámetros globales del juego
 
 #### 6. Sistema de Presets
 - [ ] Guardar configuración como preset

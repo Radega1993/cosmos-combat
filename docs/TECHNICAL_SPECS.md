@@ -426,6 +426,77 @@ function calculateDamage(attacker: Player, defender: Player, baseDamage: number)
 
 ---
 
+## 🛡️ Panel de Administración
+
+### Autenticación y Autorización
+- **Sistema de autenticación**: JWT-based con Passport.js
+- **Roles**: `USER` y `ADMIN`
+- **Protección de rutas**: `JwtAuthGuard` y `RolesGuard`
+- **Endpoints protegidos**: Todos los endpoints `/admin/*` requieren rol ADMIN
+
+### Endpoints de Administración
+
+#### Personajes
+- `GET /admin/characters` - Obtener todos los personajes (incluye inactivos)
+- `PUT /admin/characters/:id` - Actualizar personaje
+- `PUT /admin/characters/:id/toggle` - Activar/desactivar personaje
+
+#### Cartas
+- `GET /admin/cards` - Obtener todas las cartas (incluye inactivas)
+- `PUT /admin/cards/:id` - Actualizar carta
+- `PUT /admin/cards/:id/toggle` - Activar/desactivar carta
+
+#### Habilidades
+- `GET /admin/skills` - Obtener todas las habilidades (incluye inactivas)
+- `PUT /admin/skills/:id` - Actualizar habilidad
+- `PUT /admin/skills/:id/toggle` - Activar/desactivar habilidad
+
+#### Imágenes
+- `GET /admin/images/cards` - Listar imágenes disponibles de cartas
+- `GET /admin/images/characters` - Listar imágenes disponibles de personajes
+
+#### Balance
+- `GET /admin/balance` - Obtener configuración de balance actual
+- `PUT /admin/balance` - Actualizar configuración de balance
+
+### Servicios Backend
+
+#### AdminService
+- `getCardImages()`: Lee imágenes desde `deck_img/finales mazo`
+- `getCharacterImages()`: Lee imágenes desde `deck_img/finales personajes`
+- `updateSkill()`, `updateCard()`, `updateCharacter()`: Actualización completa de entidades
+- `toggleSkillActive()`, `toggleCardActive()`, `toggleCharacterActive()`: Activar/desactivar
+- `getGameBalance()`, `updateGameBalance()`: Gestión de balance general
+
+#### Servicios Extendidos
+- `CharactersService.findAllIncludingInactive()`: Obtener todos los personajes
+- `CardsService.findAllIncludingInactive()`: Obtener todas las cartas
+- `SkillsService.findAllIncludingInactive()`: Obtener todas las habilidades
+
+### Frontend - AdminPage
+
+#### Componentes
+- **Dashboard**: Panel principal con estadísticas y accesos rápidos
+- **CharactersSection**: Gestión de personajes con formulario de edición
+- **CardsSection**: Gestión de cartas con formulario de edición
+- **SkillsSection**: Gestión de habilidades con formulario de edición
+- **BalanceSection**: Ajuste de parámetros globales del juego
+
+#### Características
+- Formularios completos de edición con validación
+- Selector de imágenes con preview
+- Indicadores visuales para elementos activos/inactivos
+- Mensajes de éxito/error
+- Diseño responsive y temático
+
+### Archivos Estáticos
+- **Ruta**: `/deck_img` servida por NestJS
+- **Cartas**: `deck_img/finales mazo/`
+- **Personajes**: `deck_img/finales personajes/`
+- **Configuración**: `app.useStaticAssets()` en `main.ts`
+
+---
+
 ## Seguridad y Validación
 
 ### Validaciones del Servidor
