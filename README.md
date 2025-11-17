@@ -54,6 +54,26 @@ cosmos-combat/
 ## 🚦 Estado del Proyecto
 
 ### ✅ FASE 1: COMPLETADA
+- MVP funcional con sistema de turnos, acciones básicas y persistencia
+
+### ✅ FASE 2: COMPLETADA
+- Sistema modular de habilidades
+- Efectos de estado (Quemadura, Parálisis, Congelación)
+- Efectos defensivos (Escudos, Contraataques)
+- Ataques especiales (área, múltiples objetivos, tiradas de dado)
+- Sistema de autenticación y panel de administración básico
+
+### ✅ FASE 3: COMPLETADA
+- Panel de balanceo completo con dashboard
+- Gestión completa de personajes, cartas y habilidades
+- Ajustes de balance general del juego
+- Sistema de presets (guardar, cargar, comparar configuraciones)
+- Selección de imágenes para cartas y personajes
+
+### ⏳ FASE 4: PENDIENTE
+- Sistema de métricas y analytics
+- Dashboard de estadísticas
+- Análisis de partidas
 - [x] Configurar estructura del proyecto
 - [x] Setup de NestJS backend
 - [x] Setup de React frontend
@@ -83,8 +103,8 @@ cosmos-combat/
 | Fase | Duración | Estado |
 |------|----------|--------|
 | FASE 1 | 7 días | ✅ Completada |
-| FASE 2 | 10 días | ⏳ Pendiente |
-| FASE 3 | 3 días | ⏳ Pendiente |
+| FASE 2 | 10 días | ✅ Completada |
+| FASE 3 | 3 días | ✅ Completada |
 | FASE 4 | 5 días | ⏳ Pendiente |
 | **TOTAL** | **25 días** | |
 
