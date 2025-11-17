@@ -9,8 +9,11 @@ async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     const configService = app.get(ConfigService);
 
-    // Serve static files from deck_img directory
-    app.useStaticAssets(join(process.cwd(), 'deck_img'), {
+    // Serve static files from deck_img directory (in project root, not backend/)
+    const projectRoot = process.cwd().endsWith('backend') 
+        ? join(process.cwd(), '..') 
+        : process.cwd();
+    app.useStaticAssets(join(projectRoot, 'deck_img'), {
         prefix: '/deck_img',
     });
 

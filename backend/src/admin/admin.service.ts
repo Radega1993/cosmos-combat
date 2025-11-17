@@ -24,7 +24,11 @@ export class AdminService {
     // Get available card images
     async getCardImages(): Promise<string[]> {
         try {
-            const imagesPath = join(process.cwd(), 'deck_img', 'finales mazo');
+            // deck_img is in the project root, not in backend/
+            const projectRoot = process.cwd().endsWith('backend') 
+                ? join(process.cwd(), '..') 
+                : process.cwd();
+            const imagesPath = join(projectRoot, 'deck_img', 'finales mazo');
             const files = await readdir(imagesPath);
             return files
                 .filter((file) => file.endsWith('.png') || file.endsWith('.jpg'))
@@ -38,7 +42,11 @@ export class AdminService {
     // Get available character images
     async getCharacterImages(): Promise<string[]> {
         try {
-            const imagesPath = join(process.cwd(), 'deck_img', 'finales personajes');
+            // deck_img is in the project root, not in backend/
+            const projectRoot = process.cwd().endsWith('backend') 
+                ? join(process.cwd(), '..') 
+                : process.cwd();
+            const imagesPath = join(projectRoot, 'deck_img', 'finales personajes');
             const files = await readdir(imagesPath);
             return files
                 .filter((file) => file.endsWith('.png') || file.endsWith('.jpg'))
