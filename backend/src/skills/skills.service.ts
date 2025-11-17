@@ -44,6 +44,13 @@ export class SkillsService {
     async findByCharacters(characterIds: string[]): Promise<Skill[]> {
         return await this.skillModel.find({ character: { $in: characterIds }, isActive: true }).exec();
     }
+
+    /**
+     * Get all skills (including inactive) - for admin use
+     */
+    async findAllIncludingInactive(): Promise<Skill[]> {
+        return await this.skillModel.find({}).exec();
+    }
 }
 
 

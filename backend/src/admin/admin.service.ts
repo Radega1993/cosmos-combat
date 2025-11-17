@@ -4,6 +4,9 @@ import { Model } from 'mongoose';
 import { Skill, SkillDocument } from '../database/schemas/skill.schema';
 import { Card, CardDocument } from '../database/schemas/card.schema';
 import { Character, CharacterDocument } from '../database/schemas/character.schema';
+import { GameBalance, GameBalanceDocument } from '../database/schemas/game-balance.schema';
+import { readdir } from 'fs/promises';
+import { join } from 'path';
 
 @Injectable()
 export class AdminService {
@@ -14,7 +17,37 @@ export class AdminService {
         private cardModel: Model<CardDocument>,
         @InjectModel(Character.name)
         private characterModel: Model<CharacterDocument>,
+        @InjectModel(GameBalance.name)
+        private gameBalanceModel: Model<GameBalanceDocument>,
     ) { }
+
+    // Get available card images
+    async getCardImages(): Promise<string[]> {
+        try {
+            const imagesPath = join(process.cwd(), 'deck_img', 'finales mazo');
+            const files = await readdir(imagesPath);
+            return files
+                .filter((file) => file.endsWith('.png') || file.endsWith('.jpg'))
+                .map((file) => `/deck_img/finales mazo/${encodeURIComponent(file)}`);
+        } catch (error) {
+            console.error('Error reading card images:', error);
+            return [];
+        }
+    }
+
+    // Get available character images
+    async getCharacterImages(): Promise<string[]> {
+        try {
+            const imagesPath = join(process.cwd(), 'deck_img', 'finales personajes');
+            const files = await readdir(imagesPath);
+            return files
+                .filter((file) => file.endsWith('.png') || file.endsWith('.jpg'))
+                .map((file) => `/deck_img/finales personajes/${encodeURIComponent(file)}`);
+        } catch (error) {
+            console.error('Error reading character images:', error);
+            return [];
+        }
+    }
 
     // Skills management
     async updateSkill(skillId: string, updateData: Partial<Skill>): Promise<Skill> {
@@ -89,6 +122,21 @@ export class AdminService {
 
         character.isActive = !character.isActive;
         return await character.save();
+    }
+
+    // Game Balance management
+    async getGameBalance(): Promise<GameBalance | null> {
+        return await this.gameBalanceModel.findOne({ isActive: true }).exec();
+    }
+
+    async updateGameBalance(updateData: Partial<GameBalance>): Promise<GameBalance> {
+        const balance = await this.gameBalanceModel.findOne({ isActive: true }).exec();
+        if (!balance) {
+            throw new NotFoundException('Active game balance not found');
+        }
+
+        Object.assign(balance, updateData);
+        return await balance.save();
     }
 }
 

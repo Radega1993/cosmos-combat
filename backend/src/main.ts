@@ -1,11 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
     const configService = app.get(ConfigService);
+
+    // Serve static files from deck_img directory
+    app.useStaticAssets(join(process.cwd(), 'deck_img'), {
+        prefix: '/deck_img',
+    });
 
     // Enable CORS
     app.enableCors({
@@ -27,6 +34,7 @@ async function bootstrap() {
 
     console.log(`🚀 Backend server running on: http://localhost:${port}`);
     console.log(`📡 WebSocket available at: ws://localhost:${port}/socket.io`);
+    console.log(`🖼️  Static files served from: /deck_img`);
 }
 
 bootstrap();

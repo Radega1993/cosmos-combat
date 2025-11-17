@@ -25,5 +25,12 @@ export class CardsService {
     async findByType(type: string): Promise<Card[]> {
         return await this.cardModel.find({ type, isActive: true }).exec();
     }
+
+    /**
+     * Get all cards (including inactive) - for admin use
+     */
+    async findAllIncludingInactive(): Promise<Card[]> {
+        return await this.cardModel.find({}).exec();
+    }
 }
 

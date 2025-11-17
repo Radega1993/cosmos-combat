@@ -21,5 +21,12 @@ export class CharactersService {
     async findByIds(ids: string[]): Promise<Character[]> {
         return await this.characterModel.find({ id: { $in: ids }, isActive: true }).exec();
     }
+
+    /**
+     * Get all characters (including inactive) - for admin use
+     */
+    async findAllIncludingInactive(): Promise<Character[]> {
+        return await this.characterModel.find({}).exec();
+    }
 }
 

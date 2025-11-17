@@ -200,6 +200,40 @@ class ApiService {
             method: 'PUT',
         });
     }
+
+    // Images
+    async getCardImages() {
+        return this.fetch<string[]>('/admin/images/cards');
+    }
+
+    async getCharacterImages() {
+        return this.fetch<string[]>('/admin/images/characters');
+    }
+
+    // Admin endpoints (including inactive items)
+    async getAdminCharacters() {
+        return this.fetch<any[]>('/admin/characters');
+    }
+
+    async getAdminCards() {
+        return this.fetch<any[]>('/admin/cards');
+    }
+
+    async getAdminSkills() {
+        return this.fetch<any[]>('/admin/skills');
+    }
+
+    // Game Balance
+    async getGameBalance() {
+        return this.fetch<any>('/admin/balance');
+    }
+
+    async updateGameBalance(data: any) {
+        return this.fetch<any>('/admin/balance', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    }
 }
 
 export const apiService = new ApiService();

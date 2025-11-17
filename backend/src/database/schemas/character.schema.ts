@@ -57,6 +57,9 @@ export class Character {
     @Prop({ type: [String], default: [] })
     deck: string[];
 
+    @Prop()
+    image?: string;
+
     @Prop({ default: true })
     isActive: boolean;
 }

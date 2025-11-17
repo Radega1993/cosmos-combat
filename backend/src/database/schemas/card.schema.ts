@@ -57,6 +57,9 @@ export class Card {
     @Prop({ required: true })
     description: string;
 
+    @Prop()
+    image?: string;
+
     @Prop({ default: true })
     isActive: boolean;
 }

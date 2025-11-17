@@ -1,6 +1,6 @@
 # 📊 Estado Actual del Proyecto - Cosmos Combat
 
-**Última actualización**: Diciembre 2024 (FASE 2 - Días 8-9 Completados)
+**Última actualización**: Diciembre 2024 (FASE 3 - Días 18-19 Completados)
 
 ---
 
@@ -318,7 +318,74 @@
 
 ## 🚀 Siguiente Sprint Sugerido
 
-**Objetivo**: Comenzar FASE 3 - Panel de Balanceo (Días 18-20)
+## ✅ FASE 3: Panel de Balanceo (En Progreso)
+
+### Día 18-19: Panel de Administración y Ajustes ✅ COMPLETADO
+- [x] **Dashboard de configuración**
+  - [x] Panel principal con estadísticas del sistema
+  - [x] Navegación por pestañas (Dashboard, Personajes, Cartas, Habilidades, Balance)
+  - [x] Visualización de elementos activos/inactivos
+  - [x] Accesos rápidos a cada sección
+
+- [x] **Gestión de Personajes**
+  - [x] Lista completa de personajes (activos e inactivos)
+  - [x] Formulario de edición completo:
+    - [x] Nombre, descripción, HP máximo
+    - [x] Estadísticas base (ataque, defensa, velocidad, esquiva, acierto)
+    - [x] Atributos (resistencias, inmunidades)
+    - [x] Selección de imagen con preview
+  - [x] Activación/desactivación de personajes
+  - [x] Indicadores visuales para elementos inactivos
+
+- [x] **Gestión de Cartas**
+  - [x] Lista completa de cartas (activas e inactivas)
+  - [x] Formulario de edición completo:
+    - [x] Nombre, descripción, tipo, objetivo
+    - [x] Costo, daño, curación, escudo, defensa
+    - [x] Selección de imagen con preview
+  - [x] Activación/desactivación de cartas
+  - [x] Indicadores visuales para elementos inactivos
+
+- [x] **Gestión de Habilidades**
+  - [x] Lista completa de habilidades (activas e inactivas)
+  - [x] Formulario de edición completo:
+    - [x] Nombre, descripción, tipo, objetivo
+    - [x] Daño, curación, escudo
+    - [x] Cooldown, costo
+  - [x] Activación/desactivación de habilidades
+  - [x] Indicadores visuales para elementos inactivos
+
+- [x] **Ajustes de Balance General**
+  - [x] Formulario para ajustar parámetros globales:
+    - [x] Mano inicial
+    - [x] Cartas por turno
+    - [x] Acciones por turno
+  - [x] Guardado de cambios en MongoDB
+
+- [x] **Sistema de Imágenes**
+  - [x] Endpoints para listar imágenes disponibles
+  - [x] Servicio de archivos estáticos para `/deck_img`
+  - [x] Selector de imágenes con preview
+  - [x] Soporte para imágenes de cartas y personajes
+
+- [x] **Backend - Endpoints de Administración**
+  - [x] `GET /admin/characters` - Todos los personajes (incluye inactivos)
+  - [x] `GET /admin/cards` - Todas las cartas (incluye inactivas)
+  - [x] `GET /admin/skills` - Todas las habilidades (incluye inactivas)
+  - [x] `GET /admin/images/cards` - Lista de imágenes de cartas
+  - [x] `GET /admin/images/characters` - Lista de imágenes de personajes
+  - [x] `GET /admin/balance` - Obtener balance actual
+  - [x] `PUT /admin/balance` - Actualizar balance
+  - [x] Métodos en servicios para obtener elementos inactivos
+
+- [x] **Frontend - Panel de Administración**
+  - [x] Interfaz completa de administración
+  - [x] Formularios de edición con validación
+  - [x] Preview de imágenes
+  - [x] Mensajes de éxito/error
+  - [x] Diseño responsive y temático
+
+**Objetivo**: Completar Día 20 - Sistema de Presets
 
 1. Panel de balanceo avanzado
 2. Sistema de versionado de balance
