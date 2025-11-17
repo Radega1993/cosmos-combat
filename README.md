@@ -75,8 +75,6 @@ cosmos-combat/
 - [x] Persistencia de partidas en MongoDB
 - [x] **Dos modos de partida**: Aleatorio (predeterminado) y Selección
 - [x] **Página "Cómo se juega"** con guía completa
-- [x] **Dos modos de partida**: Aleatorio (predeterminado) y Selección
-- [x] **Página "Cómo se juega"** con guía completa
 - [x] **Diseño responsive** optimizado para móvil y desktop
 - [x] **Temática espacial** con estilos modernos
 
