@@ -54,26 +54,6 @@ cosmos-combat/
 ## 🚦 Estado del Proyecto
 
 ### ✅ FASE 1: COMPLETADA
-- MVP funcional con sistema de turnos, acciones básicas y persistencia
-
-### ✅ FASE 2: COMPLETADA
-- Sistema modular de habilidades
-- Efectos de estado (Quemadura, Parálisis, Congelación)
-- Efectos defensivos (Escudos, Contraataques)
-- Ataques especiales (área, múltiples objetivos, tiradas de dado)
-- Sistema de autenticación y panel de administración básico
-
-### ✅ FASE 3: COMPLETADA
-- Panel de balanceo completo con dashboard
-- Gestión completa de personajes, cartas y habilidades
-- Ajustes de balance general del juego
-- Sistema de presets (guardar, cargar, comparar configuraciones)
-- Selección de imágenes para cartas y personajes
-
-### ⏳ FASE 4: PENDIENTE
-- Sistema de métricas y analytics
-- Dashboard de estadísticas
-- Análisis de partidas
 - [x] Configurar estructura del proyecto
 - [x] Setup de NestJS backend
 - [x] Setup de React frontend
@@ -95,8 +75,31 @@ cosmos-combat/
 - [x] Persistencia de partidas en MongoDB
 - [x] **Dos modos de partida**: Aleatorio (predeterminado) y Selección
 - [x] **Página "Cómo se juega"** con guía completa
+- [x] **Dos modos de partida**: Aleatorio (predeterminado) y Selección
+- [x] **Página "Cómo se juega"** con guía completa
 - [x] **Diseño responsive** optimizado para móvil y desktop
 - [x] **Temática espacial** con estilos modernos
+
+### ✅ FASE 2: COMPLETADA
+- [x] Sistema modular de habilidades
+- [x] Efectos de estado (Quemadura, Parálisis, Congelación)
+- [x] Efectos defensivos (Escudos, Contraataques)
+- [x] Ataques especiales (área, múltiples objetivos, tiradas de dado)
+- [x] Sistema de autenticación JWT con roles
+- [x] Panel de administración básico
+
+### ✅ FASE 3: COMPLETADA
+- [x] Panel de balanceo completo con dashboard
+- [x] Gestión completa de personajes, cartas y habilidades
+- [x] Ajustes de balance general del juego
+- [x] Sistema de presets (guardar, cargar, comparar configuraciones)
+- [x] Selección de imágenes para cartas y personajes
+- [x] Formularios de edición completos con validación
+
+### ⏳ FASE 4: PENDIENTE
+- [ ] Sistema de métricas y analytics
+- [ ] Dashboard de estadísticas
+- [ ] Análisis de partidas
 
 ## ⏱️ Timeline Estimado
 
