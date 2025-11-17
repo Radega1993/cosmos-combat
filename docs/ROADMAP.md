@@ -7,7 +7,7 @@
 | **FASE 1** | 7 días | TBD | Diciembre 2024 | ✅ Completada |
 | **FASE 2** | 10 días | TBD | TBD | ⏳ Pendiente |
 | **FASE 3** | 3 días | Días 18-20 | Diciembre 2024 | ✅ Completada |
-| **FASE 4** | 5 días | TBD | TBD | ⏳ Pendiente |
+| **FASE 4** | 5 días | Días 21-25 | Diciembre 2024 | ✅ Completada |
 | **TOTAL** | **25 días** | | | |
 
 ---
@@ -120,25 +120,27 @@
 
 ## 🎯 FASE 4: Métricas y Analytics (5 días)
 
-### Día 21-22: Recolección de Datos
-- [ ] Sistema de tracking
-- [ ] Registro de partidas
-- [ ] Captura de eventos
-- [ ] Almacenamiento de datos
+### Día 21-22: Recolección de Datos ✅
+- [x] Sistema de tracking expandido
+- [x] Registro de partidas mejorado
+- [x] Captura de eventos detallada
+- [x] Almacenamiento de datos
 
-### Día 23-24: Cálculo de Métricas
-- [ ] % victorias por personaje
-- [ ] Uso de cartas
-- [ ] Duración de partidas
-- [ ] Estadísticas de jugadores
+### Día 23-24: Cálculo de Métricas ✅
+- [x] % victorias por personaje
+- [x] Uso de cartas
+- [x] Duración de partidas
+- [x] Estadísticas de jugadores
+- [x] Estadísticas generales
+- [x] Exportación de datos (JSON/CSV)
 
-### Día 25: Dashboard y Exportación
-- [ ] Dashboard de estadísticas
-- [ ] Visualización de datos
-- [ ] Exportación de datos
-- [ ] Análisis básico
+### Día 25: Dashboard y Exportación ✅
+- [x] Dashboard de estadísticas
+- [x] Visualización de datos
+- [x] Exportación de datos (UI)
+- [x] Análisis básico
 
-**Entregable**: Sistema completo de métricas
+**Entregable**: Sistema completo de métricas ✅
 
 ---
 
@@ -233,11 +235,15 @@ Al completar todas las fases:
 ---
 
 **Última actualización**: Diciembre 2024
-**Versión del Roadmap**: 1.1.0
+**Versión del Roadmap**: 1.2.0
 
 ### Cambios en esta versión:
 - ✅ FASE 1 completada al 100%
+- ✅ FASE 2 completada al 100%
+- ✅ FASE 3 completada al 100%
+- ✅ FASE 4 completada al 100% (Sistema completo de Analytics)
 - ✅ Extras implementados: Página "Cómo se juega", diseño responsive, temática espacial
 - ✅ Dos modos de partida: Aleatorio (predeterminado) y Selección
+- ✅ Sistema completo de analytics: Backend + Frontend Dashboard
 
 

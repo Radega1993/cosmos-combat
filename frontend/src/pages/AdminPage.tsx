@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api.service';
 import './AdminPage.css';
@@ -266,6 +267,9 @@ function AdminPage() {
                                     </div>
                                 </div>
                                 <div className="dashboard-actions">
+                                    <Link to="/analytics" className="action-button">
+                                        📊 Ver Analytics
+                                    </Link>
                                     <button onClick={() => setActiveTab('characters')} className="action-button">
                                         Gestionar Personajes
                                     </button>

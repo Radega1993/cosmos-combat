@@ -5,6 +5,7 @@ import HowToPlayPage from './pages/HowToPlayPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -21,6 +22,14 @@ function App() {
                     element={
                         <ProtectedRoute requireAdmin={true}>
                             <AdminPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/analytics"
+                    element={
+                        <ProtectedRoute requireAdmin={true}>
+                            <AnalyticsPage />
                         </ProtectedRoute>
                     }
                 />

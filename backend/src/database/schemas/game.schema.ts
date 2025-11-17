@@ -55,6 +55,13 @@ export class Game {
             totalActions: { type: Number, required: true },
             duration: { type: Number, required: true },
             averageTurnDuration: { type: Number, required: true },
+            totalDamage: { type: Number },
+            totalHealing: { type: Number },
+            cardsPlayed: { type: Number },
+            skillsUsed: { type: Number },
+            attacksPerformed: { type: Number },
+            effectsApplied: { type: Number },
+            playersEliminated: { type: Number },
         },
     })
     gameStats?: {
@@ -62,6 +69,13 @@ export class Game {
         totalActions: number;
         duration: number;
         averageTurnDuration: number;
+        totalDamage?: number;
+        totalHealing?: number;
+        cardsPlayed?: number;
+        skillsUsed?: number;
+        attacksPerformed?: number;
+        effectsApplied?: number;
+        playersEliminated?: number;
     };
 
     @Prop({ required: true })

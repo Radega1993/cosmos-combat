@@ -22,7 +22,7 @@ export class GameAction {
 
     @Prop({
         required: true,
-        enum: ['play-card', 'use-skill', 'attack', 'defend', 'draw-card', 'end-turn'],
+        enum: ['play-card', 'use-skill', 'attack', 'defend', 'draw-card', 'end-turn', 'effect-discard', 'counterattack', 'game-start', 'game-end', 'player-eliminated'],
     })
     actionType: string;
 
@@ -36,6 +36,7 @@ export class GameAction {
             targetName: { type: String },
             damage: { type: Number },
             heal: { type: Number },
+            shield: { type: Number },
             effectsApplied: {
                 type: [
                     {
@@ -44,6 +45,21 @@ export class GameAction {
                     },
                 ],
             },
+            effectType: { type: String },
+            cardsDiscarded: { type: Number },
+            originalDamage: { type: Number },
+            shieldAbsorbed: { type: Number },
+            counterDamage: { type: Number },
+            isAreaAttack: { type: Boolean },
+            targetsCount: { type: Number },
+            diceRolls: { type: [Number] },
+            diceResults: { type: [Boolean] },
+            finalHp: { type: Number },
+            eliminatedPlayerId: { type: String },
+            eliminatedPlayerName: { type: String },
+            damageSource: { type: String },
+            attackerId: { type: String },
+            playersCount: { type: Number },
         },
     })
     actionDetails?: {
@@ -55,10 +71,23 @@ export class GameAction {
         targetName?: string;
         damage?: number;
         heal?: number;
+        shield?: number;
         effectsApplied?: Array<{
             type: string;
             duration: number;
         }>;
+        effectType?: string;
+        cardsDiscarded?: number;
+        originalDamage?: number;
+        shieldAbsorbed?: number;
+        counterDamage?: number;
+        isAreaAttack?: boolean;
+        targetsCount?: number;
+        diceRolls?: number[];
+        diceResults?: boolean[];
+        finalHp?: number;
+        eliminatedPlayerId?: string;
+        eliminatedPlayerName?: string;
     };
 
     @Prop({ required: true })

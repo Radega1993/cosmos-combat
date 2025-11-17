@@ -1,6 +1,6 @@
 # 📊 Estado Actual del Proyecto - Cosmos Combat
 
-**Última actualización**: Diciembre 2024 (FASE 3 - Completada)
+**Última actualización**: Diciembre 2024 (FASE 4 - Completada al 100%)
 
 ---
 
@@ -313,6 +313,124 @@
 
 ### Problemas Conocidos
 - Ninguno conocido. Todos los sistemas están funcionando correctamente.
+
+---
+
+## ✅ FASE 4: Métricas y Analytics (Días 21-24 Completados)
+
+### Día 21-22: Recolección de Datos ✅ COMPLETADO
+- [x] **Sistema de tracking expandido**
+  - [x] Nuevos tipos de eventos: `game-start`, `game-end`, `player-eliminated`
+  - [x] Campos adicionales en `actionDetails`: shields, counterattacks, area attacks, dice rolls
+  - [x] Tracking de eliminación de jugadores con fuente de daño
+  - [x] Registro de eventos del sistema (inicio/fin de partida)
+
+- [x] **Registro de partidas mejorado**
+  - [x] Estadísticas expandidas en `Game` schema:
+    - [x] `totalDamage`, `totalHealing`
+    - [x] `cardsPlayed`, `skillsUsed`, `attacksPerformed`
+    - [x] `effectsApplied`, `playersEliminated`
+  - [x] Cálculo automático de estadísticas agregadas desde acciones
+  - [x] Método `calculateGameStats()` para agregación de datos
+
+- [x] **Captura de eventos detallada**
+  - [x] Tracking de escudos absorbidos
+  - [x] Tracking de contraataques con daño reflejado
+  - [x] Tracking de ataques de área con número de objetivos
+  - [x] Tracking de tiradas de dado (dice rolls y resultados)
+  - [x] Tracking de fuente de daño (card, skill, attack, counterattack)
+
+- [x] **Almacenamiento de datos**
+  - [x] Schema `GameAction` expandido con nuevos campos
+  - [x] Índices optimizados para consultas de analytics
+  - [x] Persistencia completa de todas las acciones del juego
+
+### Día 23-24: Cálculo de Métricas ✅ COMPLETADO
+- [x] **AnalyticsController creado**
+  - [x] Endpoints protegidos con autenticación JWT y rol ADMIN
+  - [x] Filtros por `balanceVersion`, `startDate`, `endDate`
+  - [x] Endpoints REST para todas las métricas
+
+- [x] **% victorias por personaje**
+  - [x] Método `getCharacterWinRates()` implementado
+  - [x] Cálculo de juegos jugados y victorias por personaje
+  - [x] Cálculo de win rate porcentual
+  - [x] Ordenamiento por win rate descendente
+  - [x] Incluye nombres de personajes
+
+- [x] **Uso de cartas**
+  - [x] Método `getCardUsage()` implementado
+  - [x] Estadísticas de uso: veces jugadas, daño total, curación total
+  - [x] Promedios: daño promedio, curación promedio
+  - [x] Ordenamiento por veces jugadas
+  - [x] Filtrado por versión de balance y fechas
+
+- [x] **Duración de partidas**
+  - [x] Método `getGameDurations()` implementado
+  - [x] Estadísticas: promedio, mínimo, máximo, mediana
+  - [x] Conteo de partidas totales
+  - [x] Filtrado por versión de balance y fechas
+
+- [x] **Estadísticas de jugadores**
+  - [x] Método `getPlayerStats()` implementado
+  - [x] Juegos jugados, victorias, win rate
+  - [x] Daño promedio y curación promedio por acción
+  - [x] Filtrado por jugador específico o todos
+  - [x] Ordenamiento por win rate
+
+- [x] **Estadísticas generales**
+  - [x] Método `getOverallStats()` implementado
+  - [x] Total de partidas y jugadores únicos
+  - [x] Promedios: duración, turnos, acciones por partida
+  - [x] Total de daño y curación
+  - [x] Personaje y carta más jugados
+
+- [x] **Exportación de datos**
+  - [x] Método `exportData()` implementado
+  - [x] Formato JSON con datos completos de partidas
+  - [x] Formato CSV con datos resumidos
+  - [x] Filtrado por versión de balance y fechas
+
+- [x] **Backend - Endpoints de Analytics**
+  - [x] `GET /analytics/character-win-rates` - Win rates por personaje
+  - [x] `GET /analytics/card-usage` - Estadísticas de uso de cartas
+  - [x] `GET /analytics/game-durations` - Estadísticas de duración
+  - [x] `GET /analytics/player-stats` - Estadísticas de jugadores
+  - [x] `GET /analytics/overall-stats` - Estadísticas generales
+  - [x] `GET /analytics/export` - Exportación de datos (JSON/CSV)
+
+### Día 25: Dashboard y Exportación ✅ COMPLETADO
+- [x] **Dashboard de estadísticas en frontend**
+  - [x] Página `AnalyticsPage` creada con diseño temático
+  - [x] 5 secciones: Resumen, Personajes, Cartas, Jugadores, Duraciones
+  - [x] Navegación integrada desde AdminPage
+  - [x] Protección con autenticación admin
+
+- [x] **Visualización de datos**
+  - [x] Gráficos de barras para win rates y uso de cartas
+  - [x] Tarjetas de estadísticas con métricas clave
+  - [x] Colores dinámicos según valores (verde/naranja/rojo para win rates)
+  - [x] Visualización de duraciones con formato legible
+  - [x] Diseño responsive para móvil y desktop
+
+- [x] **Interfaz de usuario para exportación**
+  - [x] Botones de exportación JSON y CSV
+  - [x] Descarga automática de archivos
+  - [x] Filtros aplicados a la exportación
+  - [x] Nombres de archivo con fecha
+
+- [x] **Análisis básico**
+  - [x] Filtros por versión de balance
+  - [x] Filtros por rango de fechas (startDate, endDate)
+  - [x] Actualización dinámica de datos al cambiar filtros
+  - [x] Cálculo automático de métricas agregadas
+
+- [x] **Frontend - Archivos creados**
+  - [x] `AnalyticsPage.tsx` - Componente principal del dashboard
+  - [x] `AnalyticsPage.css` - Estilos temáticos y responsive
+  - [x] Métodos agregados en `api.service.ts` para todos los endpoints
+  - [x] Ruta `/analytics` agregada en `App.tsx` con protección admin
+  - [x] Enlace desde AdminPage al dashboard de analytics
 
 ---
 

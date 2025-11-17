@@ -14,11 +14,15 @@ export class CardsController {
     }
 
     @Get('batch')
-    async findByIds(@Query('ids') ids: string) {
+    async findByIds(@Query('ids') ids: string, @Query('includeInactive') includeInactive?: string) {
         if (!ids) {
             return [];
         }
         const idArray = ids.split(',').filter(Boolean);
+        // If includeInactive is true, return cards even if inactive (for game context)
+        if (includeInactive === 'true') {
+            return await this.cardsService.findByIdsIncludingInactive(idArray);
+        }
         return await this.cardsService.findByIds(idArray);
     }
 

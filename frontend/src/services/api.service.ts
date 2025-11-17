@@ -88,7 +88,8 @@ class ApiService {
                 return [];
             }
             const idsParam = ids.join(',');
-            const cards = await this.fetch<any[]>(`/cards/batch?ids=${idsParam}`);
+            // includeInactive=true by default because players may have inactive cards in hand
+            const cards = await this.fetch<any[]>(`/cards/batch?ids=${idsParam}&includeInactive=true`);
             return cards || [];
         } catch (error) {
             console.error('Error fetching cards by IDs:', error);
@@ -241,6 +242,56 @@ class ApiService {
             method: 'POST',
             body: JSON.stringify({ name, description }),
         });
+    }
+
+    // Analytics
+    async getCharacterWinRates(balanceVersion?: string, startDate?: string, endDate?: string) {
+        const params = new URLSearchParams();
+        if (balanceVersion) params.append('balanceVersion', balanceVersion);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        return this.fetch<any[]>(`/analytics/character-win-rates?${params.toString()}`);
+    }
+
+    async getCardUsage(balanceVersion?: string, startDate?: string, endDate?: string) {
+        const params = new URLSearchParams();
+        if (balanceVersion) params.append('balanceVersion', balanceVersion);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        return this.fetch<any[]>(`/analytics/card-usage?${params.toString()}`);
+    }
+
+    async getGameDurations(balanceVersion?: string, startDate?: string, endDate?: string) {
+        const params = new URLSearchParams();
+        if (balanceVersion) params.append('balanceVersion', balanceVersion);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        return this.fetch<any>(`/analytics/game-durations?${params.toString()}`);
+    }
+
+    async getPlayerStats(playerId?: string, startDate?: string, endDate?: string) {
+        const params = new URLSearchParams();
+        if (playerId) params.append('playerId', playerId);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        return this.fetch<any[]>(`/analytics/player-stats?${params.toString()}`);
+    }
+
+    async getOverallStats(balanceVersion?: string, startDate?: string, endDate?: string) {
+        const params = new URLSearchParams();
+        if (balanceVersion) params.append('balanceVersion', balanceVersion);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        return this.fetch<any>(`/analytics/overall-stats?${params.toString()}`);
+    }
+
+    async exportData(format: 'json' | 'csv' = 'json', balanceVersion?: string, startDate?: string, endDate?: string) {
+        const params = new URLSearchParams();
+        params.append('format', format);
+        if (balanceVersion) params.append('balanceVersion', balanceVersion);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        return this.fetch<any>(`/analytics/export?${params.toString()}`);
     }
 
     async getPresets() {

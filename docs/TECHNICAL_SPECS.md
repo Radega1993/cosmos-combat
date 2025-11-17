@@ -649,6 +649,168 @@ docker-compose up
 
 ---
 
-**Última actualización**: [Fecha]
-**Versión**: 1.0.0
+---
+
+## 📊 Sistema de Analytics
+
+### Arquitectura
+
+El sistema de analytics está implementado en el módulo `AnalyticsModule` y proporciona:
+
+1. **Recolección de Datos**: Tracking automático de todas las acciones del juego
+2. **Almacenamiento**: Persistencia en MongoDB (`games` y `gameActions` collections)
+3. **Cálculo de Métricas**: Agregación y análisis de datos
+4. **Exportación**: Datos en formatos JSON y CSV
+
+### Schemas
+
+#### GameAction Schema (Expandido)
+
+```typescript
+{
+  gameId: string;
+  turn: number;
+  playerId: string;
+  playerName: string;
+  characterId: string;
+  actionType: 'play-card' | 'use-skill' | 'attack' | 'defend' | 'draw-card' | 
+              'end-turn' | 'effect-discard' | 'counterattack' | 'game-start' | 
+              'game-end' | 'player-eliminated';
+  actionDetails: {
+    // Campos básicos
+    cardId?: string;
+    cardName?: string;
+    skillId?: string;
+    skillName?: string;
+    targetId?: string;
+    targetName?: string;
+    damage?: number;
+    heal?: number;
+    shield?: number;
+    effectsApplied?: Array<{ type: string; duration: number }>;
+    
+    // Campos de efectos
+    effectType?: string;
+    cardsDiscarded?: number;
+    
+    // Campos de combate
+    originalDamage?: number;
+    shieldAbsorbed?: number;
+    counterDamage?: number;
+    isAreaAttack?: boolean;
+    targetsCount?: number;
+    
+    // Campos de dados
+    diceRolls?: number[];
+    diceResults?: boolean[];
+    
+    // Campos de eliminación
+    finalHp?: number;
+    eliminatedPlayerId?: string;
+    eliminatedPlayerName?: string;
+    damageSource?: string;
+    attackerId?: string;
+    
+    // Campos de sistema
+    duration?: number;
+    totalTurns?: number;
+    totalActions?: number;
+    playersEliminated?: number;
+    playersCount?: number;
+  };
+  timestamp: Date;
+}
+```
+
+#### Game Schema (Expandido)
+
+```typescript
+{
+  gameId: string;
+  players: Array<{
+    playerId: string;
+    playerName: string;
+    characterId: string;
+    characterName: string;
+    finalHp: number;
+    maxHp: number;
+    position: number;
+    isWinner: boolean;
+  }>;
+  winner?: {
+    playerId: string;
+    playerName: string;
+    characterId: string;
+    finalHp: number;
+  };
+  gameStats: {
+    totalTurns: number;
+    totalActions: number;
+    duration: number;
+    averageTurnDuration: number;
+    totalDamage?: number;
+    totalHealing?: number;
+    cardsPlayed?: number;
+    skillsUsed?: number;
+    attacksPerformed?: number;
+    effectsApplied?: number;
+    playersEliminated?: number;
+  };
+  balanceVersion: string;
+  startedAt: Date;
+  finishedAt?: Date;
+}
+```
+
+### Endpoints de Analytics
+
+Todos los endpoints requieren autenticación JWT y rol ADMIN:
+
+- `GET /analytics/character-win-rates?balanceVersion=&startDate=&endDate=`
+- `GET /analytics/card-usage?balanceVersion=&startDate=&endDate=`
+- `GET /analytics/game-durations?balanceVersion=&startDate=&endDate=`
+- `GET /analytics/player-stats?playerId=&startDate=&endDate=`
+- `GET /analytics/overall-stats?balanceVersion=&startDate=&endDate=`
+- `GET /analytics/export?format=json|csv&balanceVersion=&startDate=&endDate=`
+
+### Métodos del AnalyticsService
+
+- `saveGame()` - Guarda partida completada con estadísticas
+- `recordAction()` - Registra acción individual
+- `recordTurnStart()` - Registra inicio de turno
+- `getCharacterWinRates()` - Calcula win rates por personaje
+- `getCardUsage()` - Estadísticas de uso de cartas
+- `getGameDurations()` - Estadísticas de duración
+- `getPlayerStats()` - Estadísticas de jugadores
+- `getOverallStats()` - Estadísticas generales
+- `exportData()` - Exporta datos en JSON o CSV
+
+---
+
+### Frontend - Analytics Dashboard
+
+El dashboard de analytics está implementado en `AnalyticsPage` y proporciona:
+
+1. **Visualización de Métricas**: Gráficos de barras, tarjetas de estadísticas
+2. **Filtrado**: Por versión de balance y rango de fechas
+3. **Exportación**: Descarga directa de datos en JSON o CSV
+4. **Navegación**: Integrado con AdminPage
+
+#### Componentes
+
+- `AnalyticsPage` - Componente principal con tabs y visualizaciones
+- `OverviewSection` - Resumen general con métricas clave
+- `CharactersSection` - Win rates por personaje con gráficos
+- `CardsSection` - Uso de cartas con estadísticas
+- `PlayersSection` - Estadísticas de jugadores
+- `DurationsSection` - Estadísticas de duración de partidas
+
+#### Rutas
+
+- `/analytics` - Dashboard de analytics (requiere autenticación admin)
+
+---
+
+**Última actualización**: Diciembre 2024
+**Versión**: 1.3.0
 

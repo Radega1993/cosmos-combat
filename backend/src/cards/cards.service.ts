@@ -22,6 +22,14 @@ export class CardsService {
         return await this.cardModel.find({ id: { $in: ids }, isActive: true }).exec();
     }
 
+    /**
+     * Get cards by IDs including inactive ones (for game context)
+     * This is needed because players may have inactive cards in their hand
+     */
+    async findByIdsIncludingInactive(ids: string[]): Promise<Card[]> {
+        return await this.cardModel.find({ id: { $in: ids } }).exec();
+    }
+
     async findByType(type: string): Promise<Card[]> {
         return await this.cardModel.find({ type, isActive: true }).exec();
     }

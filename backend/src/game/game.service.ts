@@ -209,6 +209,17 @@ export class GameService {
 
         // Record game start for analytics
         this.analyticsService.recordTurnStart(gameId, 1);
+        await this.analyticsService.recordAction(
+            gameId,
+            1,
+            'system',
+            'System',
+            'system',
+            'game-start',
+            {
+                playersCount: gameState.players.length,
+            },
+        );
 
         // Start first turn
         await this.startTurn(gameId);
@@ -1041,6 +1052,9 @@ export class GameService {
 
         // Apply remaining damage to HP
         const newHp = Math.max(0, player.hp - remainingDamage);
+        const wasAlive = player.hp > 0;
+        const isEliminated = newHp <= 0 && wasAlive;
+
         this.gameStateService.updatePlayerState(gameId, playerId, {
             hp: newHp,
             status: {
@@ -1048,6 +1062,26 @@ export class GameService {
                 shields: player.status.shields,
             },
         });
+
+        // Record player elimination if it just happened
+        if (isEliminated) {
+            const gameStateForTurn = this.gameStateService.getGameState(gameId);
+            await this.analyticsService.recordAction(
+                gameId,
+                gameStateForTurn?.currentTurn || 1,
+                playerId,
+                player.playerName,
+                player.characterId,
+                'player-eliminated',
+                {
+                    eliminatedPlayerId: playerId,
+                    eliminatedPlayerName: player.playerName,
+                    finalHp: newHp,
+                    damageSource: source,
+                    attackerId: attackerId || undefined,
+                },
+            );
+        }
 
         // Apply counterattack damage to attacker (if applicable)
         if (counterDamage > 0 && attackerId && attackerId !== playerId) {
