@@ -65,9 +65,9 @@ export class EffectsService {
                 }
             }
 
-            // Paralysis and Freeze - reduce actions
-            if (effect.type === 'paralysis' || effect.type === 'freeze') {
-                const actionsReduced = effectConfig.actionsReduced || 1;
+            // Paralysis, Freeze, and Action Reduction - reduce actions
+            if (effect.type === 'paralysis' || effect.type === 'freeze' || effect.type === 'action-reduction') {
+                const actionsReduced = effectConfig.actionsReduced || effect.value || 1;
                 totalActionsReduced += actionsReduced;
             }
         }

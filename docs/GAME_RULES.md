@@ -45,14 +45,14 @@ Cosmos Combat es un emocionante juego de cartas en el que los jugadores asumen e
 
 4. **Mazo Compartido**: Baraja el mazo de cartas de habilidades (79 cartas) y colócalo en el centro de la mesa. **Todos los jugadores roban del mismo mazo compartido**.
 
-5. **Orden de Juego**: Determina el orden de juego. En el juego digital, el orden se determina automáticamente por la velocidad base de cada personaje (el más rápido actúa primero).
+5. **Orden de Juego**: Determina el orden de juego. En el juego digital, cada jugador tira un dado (1-6) y el orden se determina por el resultado de la tirada (el mayor resultado actúa primero). En caso de empate, se mantiene el orden original.
 
 ---
 
 ## 🔄 Desarrollo del Juego
 
 ### Turnos
-Los jugadores se turnan en sentido horario (o según el orden determinado por velocidad).
+Los jugadores se turnan en sentido horario según el orden determinado al inicio de la partida (por lanzamiento de dados).
 
 ### Acciones por Turno
 En tu turno, tienes **2 acciones** para:
@@ -140,4 +140,19 @@ La partida termina cuando solo queda un jugador en pie. ¡Ese jugador es el gana
 
 ---
 
-**Última actualización**: Diciembre 2024
+## 👽 Personajes y Puntos de Vida
+
+Cada personaje tiene un valor inicial de puntos de vida diferente:
+
+| Personaje | HP Máximo |
+|-----------|-----------|
+| Ironclad  | 22        |
+| Blaze     | 18        |
+| Frost     | 15        |
+| Thunder   | 17        |
+| Shadow    | 16        |
+| Strike    | 20        |
+
+---
+
+**Última actualización**: Noviembre 2025

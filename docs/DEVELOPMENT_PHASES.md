@@ -38,7 +38,7 @@ Crear la funcionalidad mínima necesaria para jugar una partida completa de Cosm
 - [x] Recarga de mazo desde descarte
 
 #### 4. Sistema de Turnos
-- [x] Inicialización de turno (orden por velocidad)
+- [x] Inicialización de turno (orden por lanzamiento de dados)
 - [x] Indicador de turno actual
 - [x] Contador de acciones (2 por turno)
 - [x] Finalización de turno

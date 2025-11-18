@@ -30,6 +30,14 @@ export interface PlayerGameState {
         }>;
         shields: number;
         cooldowns: Record<string, number>;
+        // Track skills used on specific targets for infinite cooldown reset
+        skillTargets?: Record<string, string>; // skillId -> targetId
+        // Track active defense (for dice-based defense system)
+        activeDefense?: {
+            type: 'basic' | 'card'; // 'basic' = basic defense, 'card' = skill card defense
+            cardId?: string; // If it's a card defense, store the card ID
+            duration: number; // How many turns it lasts
+        };
     };
 }
 
@@ -162,20 +170,36 @@ export class GameService {
                     effects: [],
                     shields: 0,
                     cooldowns: {},
+                    skillTargets: {},
+                    activeDefense: undefined,
                 },
             });
 
             turnOrder.push(player.playerId);
         }
 
-        // Determine turn order by speed (higher speed goes first)
-        turnOrder.sort((a, b) => {
-            const playerA = players.find((p) => p.playerId === a);
-            const playerB = players.find((p) => p.playerId === b);
-            const charA = characters.find((c) => c.id === playerA?.characterId);
-            const charB = characters.find((c) => c.id === playerB?.characterId);
-            return (charB?.baseStats.speed || 0) - (charA?.baseStats.speed || 0);
+        // Determine turn order by dice roll (higher roll goes first)
+        // According to game rules: order is determined by dice roll, not speed
+        // Each player rolls a die (1-6), highest result goes first
+        const originalOrder = [...turnOrder]; // Save original order for tie-breaking
+        const diceRolls: Array<{ playerId: string; roll: number }> = [];
+        for (const playerId of turnOrder) {
+            const roll = Math.floor(Math.random() * 6) + 1; // Roll 1-6
+            diceRolls.push({ playerId, roll });
+        }
+
+        // Sort by dice roll (highest first), then by original order for ties
+        diceRolls.sort((a, b) => {
+            if (b.roll !== a.roll) {
+                return b.roll - a.roll; // Higher roll first
+            }
+            // In case of tie, maintain original order (or could re-roll, but keeping order is simpler)
+            return originalOrder.indexOf(a.playerId) - originalOrder.indexOf(b.playerId);
         });
+
+        // Update turn order based on dice rolls
+        turnOrder.length = 0;
+        turnOrder.push(...diceRolls.map((d) => d.playerId));
 
         // Update game session
         gameSession.phase = 'playing';
@@ -485,12 +509,29 @@ export class GameService {
             .filter((effect) => effect.duration > 0);
 
         // Reduce cooldowns
+        // -1 means infinite cooldown (don't reduce, wait for target to die)
         const newCooldowns: Record<string, number> = {};
         for (const [skillId, cooldown] of Object.entries(player.status.cooldowns)) {
-            if (cooldown > 1) {
+            if (cooldown === -1) {
+                // Keep infinite cooldown as is (will be reset when target dies)
+                newCooldowns[skillId] = -1;
+            } else if (cooldown > 1) {
                 newCooldowns[skillId] = cooldown - 1;
             }
             // If cooldown is 1, it will be 0 next turn, so we don't add it
+        }
+
+        // Reduce active defense duration
+        let updatedActiveDefense = player.status.activeDefense;
+        if (updatedActiveDefense) {
+            updatedActiveDefense = {
+                ...updatedActiveDefense,
+                duration: updatedActiveDefense.duration - 1,
+            };
+            // Remove if duration expired
+            if (updatedActiveDefense.duration <= 0) {
+                updatedActiveDefense = undefined;
+            }
         }
 
         // Update player state
@@ -499,6 +540,7 @@ export class GameService {
                 ...player.status,
                 effects: updatedEffects,
                 cooldowns: newCooldowns,
+                activeDefense: updatedActiveDefense,
             },
         });
     }
@@ -711,8 +753,23 @@ export class GameService {
         }
 
         if (card.defense) {
-            // Defense is applied as temporary stat boost
-            // TODO: Implement temporary stat system
+            // Defense card played - activate defense for next turn
+            // According to game rules:
+            // - If basic defense vs basic attack: roll dice, higher wins
+            // - If card defense vs basic attack: defense wins automatically
+            const player = this.gameStateService.getPlayerState(gameId, playerId);
+            if (player) {
+                this.gameStateService.updatePlayerState(gameId, playerId, {
+                    status: {
+                        ...player.status,
+                        activeDefense: {
+                            type: 'card', // Card defense is superior to basic attack
+                            cardId: card.id,
+                            duration: 1, // Lasts until next turn
+                        },
+                    },
+                });
+            }
         }
 
         if (card.effects && card.effects.length > 0) {
@@ -812,7 +869,15 @@ export class GameService {
         }
 
         // Validate cooldown
+        // -1 means infinite cooldown (until target dies)
+        // > 0 means normal cooldown
         const cooldownRemaining = player.status.cooldowns[skillId] || 0;
+        if (cooldownRemaining === -1) {
+            return {
+                success: false,
+                message: `Skill is on cooldown until the target is eliminated`
+            };
+        }
         if (cooldownRemaining > 0) {
             return {
                 success: false,
@@ -872,21 +937,40 @@ export class GameService {
 
         // Apply cooldown
         const newCooldowns = { ...player.status.cooldowns };
-        newCooldowns[skillId] = skill.cooldown;
+        // If cooldown is -1 (infinite until target dies), set it to -1 and track the target
+        if (skill.cooldown === -1) {
+            newCooldowns[skillId] = -1;
+            // Track which target this skill was used on (for resetting when target dies)
+            const skillTargets = player.status.skillTargets || {};
+            if (targetId && skill.targetType === 'single') {
+                // For single target skills, track the specific target
+                skillTargets[skillId] = targetId;
+            } else {
+                // For self/all/area skills, track as "any" (resets when any opponent dies)
+                skillTargets[skillId] = 'any';
+            }
+            this.gameStateService.updatePlayerState(gameId, playerId, {
+                status: {
+                    ...player.status,
+                    cooldowns: newCooldowns,
+                    skillTargets,
+                },
+            });
+        } else {
+            newCooldowns[skillId] = skill.cooldown;
+            this.gameStateService.updatePlayerState(gameId, playerId, {
+                status: {
+                    ...player.status,
+                    cooldowns: newCooldowns,
+                },
+            });
+        }
 
         // Consume action
         gameState.actionsRemaining = (gameState.actionsRemaining || 0) - 1;
         if (gameState.turnState) {
             gameState.turnState.actionsRemaining = gameState.actionsRemaining;
         }
-
-        // Update player state
-        this.gameStateService.updatePlayerState(gameId, playerId, {
-            status: {
-                ...player.status,
-                cooldowns: newCooldowns,
-            },
-        });
         this.gameStateService.setGameState(gameId, gameState);
 
         // Record action for analytics
@@ -946,16 +1030,16 @@ export class GameService {
             return { success: false, message: 'Player not found' };
         }
 
-        // Get character stats
+        // Get character stats (for validation only, not used for damage calculation)
         const attackerChar = await this.charactersService.findOne(attacker.characterId);
         if (!attackerChar) {
             return { success: false, message: 'Character not found' };
         }
 
-        // Calculate damage (basic attack power)
+        // Calculate damage (basic attack always does 1 point of damage)
+        // According to game rules: "Realiza un Ataque Básico: Inflige 1 punto de daño a un objetivo"
         // Shields will be applied in applyDamage() method
-        const attackPower = attackerChar.baseStats.attack;
-        const damage = attackPower;
+        const damage = 1;
 
         // Apply damage
         const finishedState = await this.applyDamage(gameId, targetId, damage, 'attack', attackerId);
@@ -1020,6 +1104,53 @@ export class GameService {
         const balance = await this.gameBalanceModel.findOne({ version: gameState.balanceVersion, isActive: true }).exec();
         if (!balance) return null;
 
+        // Check for active defense if this is a basic attack
+        // According to game rules:
+        // - Basic defense vs basic attack: roll dice, higher wins
+        // - Card defense vs basic attack: defense wins automatically (no damage)
+        if (source === 'attack' && player.status.activeDefense) {
+            const defense = player.status.activeDefense;
+
+            if (defense.type === 'card') {
+                // Card defense vs basic attack: defense wins automatically
+                // Remove defense after use
+                this.gameStateService.updatePlayerState(gameId, playerId, {
+                    status: {
+                        ...player.status,
+                        activeDefense: undefined,
+                    },
+                });
+                // No damage is applied
+                return null;
+            } else if (defense.type === 'basic') {
+                // Basic defense vs basic attack: roll dice
+                const attackRoll = Math.floor(Math.random() * 6) + 1;
+                const defenseRoll = Math.floor(Math.random() * 6) + 1;
+
+                if (defenseRoll >= attackRoll) {
+                    // Defense wins - no damage
+                    // Remove defense after use
+                    this.gameStateService.updatePlayerState(gameId, playerId, {
+                        status: {
+                            ...player.status,
+                            activeDefense: undefined,
+                        },
+                    });
+                    return null;
+                } else {
+                    // Attack wins - apply damage
+                    // Remove defense after use
+                    this.gameStateService.updatePlayerState(gameId, playerId, {
+                        status: {
+                            ...player.status,
+                            activeDefense: undefined,
+                        },
+                    });
+                    // Continue with damage application below
+                }
+            }
+        }
+
         // Calculate counterattack damage before applying shields
         let counterDamage = 0;
         const counterEffects = player.status.effects.filter((e) => e.type === 'counter');
@@ -1081,6 +1212,44 @@ export class GameService {
                     attackerId: attackerId || undefined,
                 },
             );
+
+            // Reset cooldowns for skills that were used on this eliminated player
+            // or reset skills that reset when any opponent dies
+            if (gameStateForTurn) {
+                for (const otherPlayer of gameStateForTurn.players) {
+                    if (otherPlayer.playerId === playerId) continue; // Skip the eliminated player
+
+                    const skillTargets = otherPlayer.status.skillTargets || {};
+                    const cooldowns = otherPlayer.status.cooldowns || {};
+                    const newCooldowns = { ...cooldowns };
+                    const newSkillTargets = { ...skillTargets };
+                    let cooldownsReset = false;
+
+                    // Check each skill that has infinite cooldown
+                    for (const [skillId, targetId] of Object.entries(skillTargets)) {
+                        if (cooldowns[skillId] === -1) {
+                            // Reset if:
+                            // 1. Skill was used on this specific eliminated player, OR
+                            // 2. Skill resets when any opponent dies (targetId === 'any')
+                            if (targetId === playerId || targetId === 'any') {
+                                delete newCooldowns[skillId];
+                                delete newSkillTargets[skillId];
+                                cooldownsReset = true;
+                            }
+                        }
+                    }
+
+                    if (cooldownsReset) {
+                        this.gameStateService.updatePlayerState(gameId, otherPlayer.playerId, {
+                            status: {
+                                ...otherPlayer.status,
+                                cooldowns: newCooldowns,
+                                skillTargets: newSkillTargets,
+                            },
+                        });
+                    }
+                }
+            }
         }
 
         // Apply counterattack damage to attacker (if applicable)

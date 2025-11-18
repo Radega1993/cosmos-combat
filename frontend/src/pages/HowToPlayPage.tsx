@@ -113,7 +113,7 @@ function HowToPlayPage() {
                                 <span className="step-number">5</span>
                                 <p>
                                     <strong>Orden de Juego:</strong> Determina el orden de juego.
-                                    En el juego digital, el orden se determina automáticamente por la velocidad base de cada personaje.
+                                    En el juego digital, cada jugador tira un dado (1-6) y el orden se determina por el resultado de la tirada (el mayor resultado actúa primero). En caso de empate, se mantiene el orden original.
                                 </p>
                             </div>
                         </div>
@@ -126,7 +126,7 @@ function HowToPlayPage() {
                                 <span className="rule-icon">⏰</span>
                                 <div>
                                     <h3>Turnos</h3>
-                                    <p>Los jugadores se turnan en sentido horario (o según el orden determinado por velocidad).</p>
+                                    <p>Los jugadores se turnan en sentido horario según el orden determinado al inicio de la partida (por lanzamiento de dados).</p>
                                 </div>
                             </div>
                             <div className="rule-item">
@@ -239,6 +239,47 @@ function HowToPlayPage() {
                                 <h3>Escudo</h3>
                                 <p>Absorbe daño antes de que afecte los puntos de vida.</p>
                             </div>
+                        </div>
+                    </section>
+
+                    <section className="rules-section">
+                        <h2>👽 Personajes y Puntos de Vida</h2>
+                        <p>Cada personaje tiene un valor inicial de puntos de vida diferente:</p>
+                        <div className="characters-hp-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Personaje</th>
+                                        <th>HP Máximo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ironclad</td>
+                                        <td>22</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Blaze</td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Frost</td>
+                                        <td>15</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thunder</td>
+                                        <td>17</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shadow</td>
+                                        <td>16</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Strike</td>
+                                        <td>20</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </section>
 

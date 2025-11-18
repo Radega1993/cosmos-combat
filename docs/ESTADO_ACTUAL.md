@@ -1,6 +1,6 @@
 # 📊 Estado Actual del Proyecto - Cosmos Combat
 
-**Última actualización**: Diciembre 2024 (FASE 4 - Completada al 100%)
+**Última actualización**: Noviembre 2025 (Correcciones de Balance - FASE 1-3 Completadas)
 
 ---
 
@@ -164,7 +164,7 @@
 
 ### Día 3-4: Sistema de Turnos ✅ COMPLETADO
 - [x] **Inicialización de turno**
-  - [x] Determinar orden de turnos (por velocidad)
+  - [x] Determinar orden de turnos (por lanzamiento de dados)
   - [x] Establecer jugador inicial
   - [x] Inicializar contador de turno
   

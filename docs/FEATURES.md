@@ -61,7 +61,7 @@ Accesible desde el lobby, incluye:
 - Límite de jugadores (2-6)
 
 ### Sistema de Turnos
-- Inicialización de turno (orden por velocidad)
+- Inicialización de turno (orden por lanzamiento de dados)
 - Indicador visual de turno actual
 - Contador de acciones (2 por turno)
 - Finalización de turno
@@ -74,7 +74,13 @@ Accesible desde el lobby, incluye:
 - **Defensa**: Sistema de escudos
 
 ### Sistema de Vida
-- Puntos de vida iniciales (configurables)
+- Puntos de vida iniciales por personaje:
+  - Ironclad: 22 HP
+  - Blaze: 18 HP
+  - Frost: 15 HP
+  - Thunder: 17 HP
+  - Shadow: 16 HP
+  - Strike: 20 HP
 - Reducción de HP por daño
 - Visualización de HP en UI
 - Detección de derrota (HP = 0)

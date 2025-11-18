@@ -73,5 +73,15 @@ docs/
 
 ---
 
-**Última actualización**: Diciembre 2024
+**Última actualización**: Noviembre 2025
+
+## 📝 Cambios Recientes (Noviembre 2025)
+
+### Correcciones de Balance
+- ✅ HP de personajes actualizados a valores correctos (22, 18, 16, 17, 20, 15)
+- ✅ Ataque básico corregido: siempre hace 1 punto de daño
+- ✅ Orden de turnos cambiado: ahora se determina con lanzamiento de dados
+- ✅ Sistema de defensa con dados implementado
+
+Ver [Plan de Correcciones](./CORRECCIONES_PLAN.md) para más detalles.
 

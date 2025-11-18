@@ -270,7 +270,7 @@ data/
     {
       "id": "warrior",
       "name": "Guerrero",
-      "maxHp": 100,
+      "maxHp": 22,
       "baseStats": {
         "attack": 10,
         "defense": 5,
@@ -294,7 +294,7 @@ data/
   },
   "characters": {
     "warrior": {
-      "maxHp": 100,
+      "maxHp": 22,
       "baseAttack": 10
     }
   },

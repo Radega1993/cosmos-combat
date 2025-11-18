@@ -272,32 +272,57 @@ function PlayerStatus({
                                 <div className="details-character-info">
                                     <div className="details-info-row">
                                         <span className="details-info-label">Vida:</span>
-                                        <span className="details-info-value">{player.hp} / {player.maxHp}</span>
+                                        <span className="details-info-value">{player.hp} / {player.maxHp} HP</span>
                                     </div>
-                                    <div className="details-info-row">
-                                        <span className="details-info-label">Ataque:</span>
-                                        <span className="details-info-value">{character.baseStats.attack}</span>
+                                    <div className="details-info-note">
+                                        <small>El ataque básico siempre hace 1 punto de daño. El orden de turnos se determina con dados.</small>
                                     </div>
-                                    <div className="details-info-row">
-                                        <span className="details-info-label">Defensa:</span>
-                                        <span className="details-info-value">{character.baseStats.defense}</span>
-                                    </div>
-                                    <div className="details-info-row">
-                                        <span className="details-info-label">Velocidad:</span>
-                                        <span className="details-info-value">{character.baseStats.speed}</span>
-                                    </div>
-                                    {character.baseStats.accuracy && (
-                                        <div className="details-info-row">
-                                            <span className="details-info-label">Acierto:</span>
-                                            <span className="details-info-value">{character.baseStats.accuracy}</span>
+
+                                    {/* Character Bonuses/Attributes */}
+                                    {(character.baseStats.dodge || character.baseStats.accuracy || character.attributes) && (
+                                        <div className="details-attributes-section">
+                                            <div className="details-attributes-label">Atributos Especiales</div>
+                                            <div className="details-attributes-list">
+                                                {character.baseStats.dodge !== undefined && character.baseStats.dodge > 0 && (
+                                                    <div className="details-attribute-badge">
+                                                        <span className="details-attr-icon">💨</span>
+                                                        <span className="details-attr-text">Esquiva +{character.baseStats.dodge}</span>
+                                                    </div>
+                                                )}
+                                                {character.baseStats.accuracy !== undefined && character.baseStats.accuracy > 0 && (
+                                                    <div className="details-attribute-badge">
+                                                        <span className="details-attr-icon">🎯</span>
+                                                        <span className="details-attr-text">Acierto +{character.baseStats.accuracy}</span>
+                                                    </div>
+                                                )}
+                                                {character.attributes?.fireResistance !== undefined && character.attributes.fireResistance > 0 && (
+                                                    <div className="details-attribute-badge">
+                                                        <span className="details-attr-icon">🔥</span>
+                                                        <span className="details-attr-text">Resistencia al Fuego +{character.attributes.fireResistance}</span>
+                                                    </div>
+                                                )}
+                                                {character.attributes?.coldResistance !== undefined && character.attributes.coldResistance > 0 && (
+                                                    <div className="details-attribute-badge">
+                                                        <span className="details-attr-icon">❄️</span>
+                                                        <span className="details-attr-text">Resistencia al Frío +{character.attributes.coldResistance}</span>
+                                                    </div>
+                                                )}
+                                                {character.attributes?.physicalResistance !== undefined && character.attributes.physicalResistance > 0 && (
+                                                    <div className="details-attribute-badge">
+                                                        <span className="details-attr-icon">🛡️</span>
+                                                        <span className="details-attr-text">Resistencia a Daño Físico +{character.attributes.physicalResistance}</span>
+                                                    </div>
+                                                )}
+                                                {character.attributes?.paralysisImmunity && (
+                                                    <div className="details-attribute-badge">
+                                                        <span className="details-attr-icon">⚡</span>
+                                                        <span className="details-attr-text">Inmunidad a Parálisis</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
-                                    {character.baseStats.dodge && (
-                                        <div className="details-info-row">
-                                            <span className="details-info-label">Esquiva:</span>
-                                            <span className="details-info-value">{character.baseStats.dodge}</span>
-                                        </div>
-                                    )}
+
                                     {player.status.shields > 0 && (
                                         <div className="details-info-row">
                                             <span className="details-info-label">Escudos:</span>
@@ -311,38 +336,6 @@ function PlayerStatus({
                                     )}
                                 </div>
 
-                                {/* Attributes */}
-                                {character.attributes && Object.keys(character.attributes).length > 0 && (
-                                    <div className="details-attributes-section">
-                                        <div className="details-attributes-label">Atributos Especiales</div>
-                                        <div className="details-attributes-list">
-                                            {character.attributes.fireResistance !== undefined && character.attributes.fireResistance > 0 && (
-                                                <div className="details-attribute-badge">
-                                                    <span className="details-attr-icon">🔥</span>
-                                                    <span className="details-attr-text">Res. Fuego: {character.attributes.fireResistance}</span>
-                                                </div>
-                                            )}
-                                            {character.attributes.coldResistance !== undefined && character.attributes.coldResistance > 0 && (
-                                                <div className="details-attribute-badge">
-                                                    <span className="details-attr-icon">❄️</span>
-                                                    <span className="details-attr-text">Res. Frío: {character.attributes.coldResistance}</span>
-                                                </div>
-                                            )}
-                                            {character.attributes.physicalResistance !== undefined && character.attributes.physicalResistance > 0 && (
-                                                <div className="details-attribute-badge">
-                                                    <span className="details-attr-icon">🛡️</span>
-                                                    <span className="details-attr-text">Res. Física: {character.attributes.physicalResistance}</span>
-                                                </div>
-                                            )}
-                                            {character.attributes.paralysisImmunity && (
-                                                <div className="details-attribute-badge">
-                                                    <span className="details-attr-icon">⚡</span>
-                                                    <span className="details-attr-text">Inmune a Parálisis</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
 
                                 {/* Skills */}
                                 {skills.length > 0 && (

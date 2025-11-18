@@ -124,20 +124,57 @@ function CharacterSelector({ gameId, playerId }: CharacterSelectorProps) {
                             <div className="card-character-info">
                                 <div className="card-info-row">
                                     <span className="card-info-label">Vida:</span>
-                                    <span className="card-info-value">{character.maxHp}</span>
+                                    <span className="card-info-value">{character.maxHp} HP</span>
                                 </div>
-                                <div className="card-info-row">
-                                    <span className="card-info-label">Ataque:</span>
-                                    <span className="card-info-value">{character.baseStats.attack}</span>
+                                <div className="card-info-note">
+                                    <small>El ataque básico siempre hace 1 punto de daño</small>
                                 </div>
-                                <div className="card-info-row">
-                                    <span className="card-info-label">Defensa:</span>
-                                    <span className="card-info-value">{character.baseStats.defense}</span>
-                                </div>
-                                <div className="card-info-row">
-                                    <span className="card-info-label">Velocidad:</span>
-                                    <span className="card-info-value">{character.baseStats.speed}</span>
-                                </div>
+
+                                {/* Character Bonuses/Attributes */}
+                                {(character.baseStats.dodge || character.baseStats.accuracy || character.attributes) && (
+                                    <div className="card-attributes-section">
+                                        <div className="card-attributes-label">Atributos Especiales</div>
+                                        <div className="card-attributes-list">
+                                            {character.baseStats.dodge !== undefined && character.baseStats.dodge > 0 && (
+                                                <div className="card-attribute-badge">
+                                                    <span className="card-attr-icon">💨</span>
+                                                    <span className="card-attr-text">Esquiva +{character.baseStats.dodge}</span>
+                                                </div>
+                                            )}
+                                            {character.baseStats.accuracy !== undefined && character.baseStats.accuracy > 0 && (
+                                                <div className="card-attribute-badge">
+                                                    <span className="card-attr-icon">🎯</span>
+                                                    <span className="card-attr-text">Acierto +{character.baseStats.accuracy}</span>
+                                                </div>
+                                            )}
+                                            {character.attributes?.fireResistance !== undefined && character.attributes.fireResistance > 0 && (
+                                                <div className="card-attribute-badge">
+                                                    <span className="card-attr-icon">🔥</span>
+                                                    <span className="card-attr-text">Resistencia al Fuego +{character.attributes.fireResistance}</span>
+                                                </div>
+                                            )}
+                                            {character.attributes?.coldResistance !== undefined && character.attributes.coldResistance > 0 && (
+                                                <div className="card-attribute-badge">
+                                                    <span className="card-attr-icon">❄️</span>
+                                                    <span className="card-attr-text">Resistencia al Frío +{character.attributes.coldResistance}</span>
+                                                </div>
+                                            )}
+                                            {character.attributes?.physicalResistance !== undefined && character.attributes.physicalResistance > 0 && (
+                                                <div className="card-attribute-badge">
+                                                    <span className="card-attr-icon">🛡️</span>
+                                                    <span className="card-attr-text">Resistencia a Daño Físico +{character.attributes.physicalResistance}</span>
+                                                </div>
+                                            )}
+                                            {character.attributes?.paralysisImmunity && (
+                                                <div className="card-attribute-badge">
+                                                    <span className="card-attr-icon">⚡</span>
+                                                    <span className="card-attr-text">Inmunidad a Parálisis</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {character.description && (
                                     <div className="card-info-description">
                                         <p>{character.description}</p>
@@ -205,20 +242,57 @@ function CharacterSelector({ gameId, playerId }: CharacterSelectorProps) {
                             <div className="modal-character-info">
                                 <div className="info-row">
                                     <span className="info-label">Vida:</span>
-                                    <span className="info-value">{characterToConfirm.maxHp}</span>
+                                    <span className="info-value">{characterToConfirm.maxHp} HP</span>
                                 </div>
-                                <div className="info-row">
-                                    <span className="info-label">Ataque:</span>
-                                    <span className="info-value">{characterToConfirm.baseStats.attack}</span>
+                                <div className="info-note">
+                                    <small>El ataque básico siempre hace 1 punto de daño. El orden de turnos se determina con dados.</small>
                                 </div>
-                                <div className="info-row">
-                                    <span className="info-label">Defensa:</span>
-                                    <span className="info-value">{characterToConfirm.baseStats.defense}</span>
-                                </div>
-                                <div className="info-row">
-                                    <span className="info-label">Velocidad:</span>
-                                    <span className="info-value">{characterToConfirm.baseStats.speed}</span>
-                                </div>
+
+                                {/* Character Bonuses/Attributes */}
+                                {(characterToConfirm.baseStats.dodge || characterToConfirm.baseStats.accuracy || characterToConfirm.attributes) && (
+                                    <div className="modal-attributes-section">
+                                        <div className="modal-attributes-label">Atributos Especiales</div>
+                                        <div className="modal-attributes-list">
+                                            {characterToConfirm.baseStats.dodge !== undefined && characterToConfirm.baseStats.dodge > 0 && (
+                                                <div className="modal-attribute-badge">
+                                                    <span className="modal-attr-icon">💨</span>
+                                                    <span className="modal-attr-text">Esquiva +{characterToConfirm.baseStats.dodge}</span>
+                                                </div>
+                                            )}
+                                            {characterToConfirm.baseStats.accuracy !== undefined && characterToConfirm.baseStats.accuracy > 0 && (
+                                                <div className="modal-attribute-badge">
+                                                    <span className="modal-attr-icon">🎯</span>
+                                                    <span className="modal-attr-text">Acierto +{characterToConfirm.baseStats.accuracy}</span>
+                                                </div>
+                                            )}
+                                            {characterToConfirm.attributes?.fireResistance !== undefined && characterToConfirm.attributes.fireResistance > 0 && (
+                                                <div className="modal-attribute-badge">
+                                                    <span className="modal-attr-icon">🔥</span>
+                                                    <span className="modal-attr-text">Resistencia al Fuego +{characterToConfirm.attributes.fireResistance}</span>
+                                                </div>
+                                            )}
+                                            {characterToConfirm.attributes?.coldResistance !== undefined && characterToConfirm.attributes.coldResistance > 0 && (
+                                                <div className="modal-attribute-badge">
+                                                    <span className="modal-attr-icon">❄️</span>
+                                                    <span className="modal-attr-text">Resistencia al Frío +{characterToConfirm.attributes.coldResistance}</span>
+                                                </div>
+                                            )}
+                                            {characterToConfirm.attributes?.physicalResistance !== undefined && characterToConfirm.attributes.physicalResistance > 0 && (
+                                                <div className="modal-attribute-badge">
+                                                    <span className="modal-attr-icon">🛡️</span>
+                                                    <span className="modal-attr-text">Resistencia a Daño Físico +{characterToConfirm.attributes.physicalResistance}</span>
+                                                </div>
+                                            )}
+                                            {characterToConfirm.attributes?.paralysisImmunity && (
+                                                <div className="modal-attribute-badge">
+                                                    <span className="modal-attr-icon">⚡</span>
+                                                    <span className="modal-attr-text">Inmunidad a Parálisis</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {characterToConfirm.description && (
                                     <div className="info-description">
                                         <p>{characterToConfirm.description}</p>

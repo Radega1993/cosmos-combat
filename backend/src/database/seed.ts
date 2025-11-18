@@ -226,7 +226,7 @@ async function bootstrap() {
             character: 'shadow',
             type: 'defense',
             effects: [{ type: 'dodge', duration: 1, value: 2 }], // +2 esquivar
-            cooldown: 0, // 1 solo uso, se reinicia si eliminas oponente
+            cooldown: -1, // Infinito hasta que muera cualquier oponente
             cost: 0,
             targetType: 'self',
             description: 'Permite saltar y evadir ataques enemigos. (+2 esquivar. 1 solo uso, se reinicia si eliminas un oponente)',
@@ -251,7 +251,7 @@ async function bootstrap() {
             type: 'defense',
             shield: 0, // Absorbe mitad del daño
             effects: [{ type: 'fire-shield', duration: 1, value: 0.5 }], // Absorbe 50% del daño
-            cooldown: 0, // 1 solo uso, se reinicia si eliminas oponente
+            cooldown: -1, // Infinito hasta que muera cualquier oponente
             cost: 0,
             targetType: 'self',
             description: 'Otorga un escudo temporal que absorbe la mitad del daño recibido (1 solo uso, se reinicia si eliminas un oponente)',
@@ -263,7 +263,7 @@ async function bootstrap() {
             character: 'shadow',
             type: 'utility',
             effects: [{ type: 'invisibility', duration: 1 }], // Invisible 1 turno
-            cooldown: 0, // 1 solo uso, se reinicia si eliminas oponente
+            cooldown: -1, // Infinito hasta que muera cualquier oponente
             cost: 0,
             targetType: 'self',
             description: 'Permite volverse invisible 1 turno, dificultando que los enemigos lo detecten. (1 solo uso, se reinicia si eliminas un oponente)',
@@ -312,7 +312,7 @@ async function bootstrap() {
             character: 'frost',
             type: 'attack',
             effects: [{ type: 'action-reduction', duration: 1, value: 1 }], // -1 jugada en el turno
-            cooldown: 0, // 1 solo uso, se reinicia si eliminas oponente
+            cooldown: -1, // Infinito hasta que muera el objetivo específico
             cost: 0,
             targetType: 'single',
             description: 'Inmoviliza al objetivo. (-1 jugada en el turno. 1 solo uso, se reinicia si eliminas un oponente)',
@@ -389,7 +389,7 @@ async function bootstrap() {
             id: 'ironclad',
             name: 'Ironclad',
             description: 'Un guerrero blindado con alta resistencia física',
-            maxHp: 100,
+            maxHp: 22,
             baseStats: {
                 attack: 10,
                 defense: 5,
@@ -411,7 +411,7 @@ async function bootstrap() {
             id: 'blaze',
             name: 'Blaze',
             description: 'Maestro del fuego con ataques ardientes',
-            maxHp: 80,
+            maxHp: 18,
             baseStats: {
                 attack: 12,
                 defense: 3,
@@ -433,7 +433,7 @@ async function bootstrap() {
             id: 'frost',
             name: 'Frost',
             description: 'Guerrero del hielo que congela a sus enemigos',
-            maxHp: 90,
+            maxHp: 15,
             baseStats: {
                 attack: 9,
                 defense: 4,
@@ -455,7 +455,7 @@ async function bootstrap() {
             id: 'thunder',
             name: 'Thunder',
             description: 'Guerrero eléctrico con velocidad relámpago',
-            maxHp: 85,
+            maxHp: 17,
             baseStats: {
                 attack: 11,
                 defense: 3,
@@ -477,7 +477,7 @@ async function bootstrap() {
             id: 'shadow',
             name: 'Shadow',
             description: 'Asesino sigiloso con ataques críticos',
-            maxHp: 90,
+            maxHp: 16,
             baseStats: {
                 attack: 8,
                 defense: 4,
@@ -499,7 +499,7 @@ async function bootstrap() {
             id: 'strike',
             name: 'Strike',
             description: 'Luchador equilibrado y versátil',
-            maxHp: 95,
+            maxHp: 20,
             baseStats: {
                 attack: 9,
                 defense: 4,
@@ -534,12 +534,12 @@ async function bootstrap() {
             maxPlayers: 6,
         },
         characters: {
-            ironclad: { maxHp: 100, baseAttack: 10, baseDefense: 5, baseSpeed: 3 },
-            blaze: { maxHp: 80, baseAttack: 12, baseDefense: 3, baseSpeed: 4 },
-            frost: { maxHp: 90, baseAttack: 9, baseDefense: 4, baseSpeed: 4 },
-            thunder: { maxHp: 85, baseAttack: 11, baseDefense: 3, baseSpeed: 5 },
-            shadow: { maxHp: 90, baseAttack: 8, baseDefense: 4, baseSpeed: 5 },
-            strike: { maxHp: 95, baseAttack: 9, baseDefense: 4, baseSpeed: 4 },
+            ironclad: { maxHp: 22, baseAttack: 10, baseDefense: 5, baseSpeed: 3 },
+            blaze: { maxHp: 18, baseAttack: 12, baseDefense: 3, baseSpeed: 4 },
+            frost: { maxHp: 15, baseAttack: 9, baseDefense: 4, baseSpeed: 4 },
+            thunder: { maxHp: 17, baseAttack: 11, baseDefense: 3, baseSpeed: 5 },
+            shadow: { maxHp: 16, baseAttack: 8, baseDefense: 4, baseSpeed: 5 },
+            strike: { maxHp: 20, baseAttack: 9, baseDefense: 4, baseSpeed: 4 },
         },
         effects: {
             // Efectos básicos

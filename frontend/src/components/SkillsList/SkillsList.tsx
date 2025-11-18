@@ -24,7 +24,8 @@ function SkillsList({ skills, cooldowns, onSkillClick, disabled }: SkillsListPro
             <div className="skills-grid">
                 {skills.map((skill) => {
                     const cooldownRemaining = cooldowns[skill.id] || 0;
-                    const isOnCooldown = cooldownRemaining > 0;
+                    const isInfiniteCooldown = cooldownRemaining === -1;
+                    const isOnCooldown = cooldownRemaining > 0 || isInfiniteCooldown;
                     const canUse = !disabled && !isOnCooldown;
 
                     return (
@@ -35,7 +36,12 @@ function SkillsList({ skills, cooldowns, onSkillClick, disabled }: SkillsListPro
                         >
                             <div className="skill-header">
                                 <h4>{skill.name}</h4>
-                                {isOnCooldown && (
+                                {isInfiniteCooldown && (
+                                    <span className="cooldown-badge" title="Cooldown infinito hasta que muera el objetivo">
+                                        RE: ∞
+                                    </span>
+                                )}
+                                {isOnCooldown && !isInfiniteCooldown && (
                                     <span className="cooldown-badge">
                                         RE: {cooldownRemaining}
                                     </span>

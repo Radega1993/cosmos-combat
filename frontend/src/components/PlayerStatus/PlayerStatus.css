@@ -481,6 +481,22 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+.details-info-note {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
+.details-info-note small {
+  display: block;
+  font-style: italic;
+}
+
 .details-info-description {
   padding: 0.75rem;
   background: rgba(139, 92, 246, 0.25);

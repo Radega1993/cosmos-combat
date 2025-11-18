@@ -37,7 +37,7 @@ La **FASE 1: MVP Funcional** ha sido completada exitosamente. El prototipo digit
 - ✅ Límite de mano (maxHandSize)
 
 ### 4. Sistema de Turnos ✅
-- ✅ Inicialización de turno (orden por velocidad)
+- ✅ Inicialización de turno (orden por lanzamiento de dados)
 - ✅ Indicador visual de turno actual
 - ✅ Contador de acciones (2 por turno)
 - ✅ Validación de acciones según turno
@@ -158,7 +158,7 @@ La **FASE 1: MVP Funcional** ha sido completada exitosamente. El prototipo digit
 
 2. **Inicio de Partida**
    - Reparto de cartas iniciales
-   - Determinación de orden de turnos (por velocidad)
+   - Determinación de orden de turnos (por lanzamiento de dados)
    - Inicialización de HP y estado
 
 3. **Durante el Juego**

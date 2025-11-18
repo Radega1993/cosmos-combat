@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GameService } from './game.service';
 import { GameStateService } from './game-state.service';
@@ -24,7 +24,7 @@ import { Card, CardSchema } from '../database/schemas/card.schema';
         CardsModule,
         AnalyticsModule,
         SkillsModule,
-        EffectsModule,
+        forwardRef(() => EffectsModule),
     ],
     providers: [GameService, GameStateService],
     exports: [GameService, GameStateService],
